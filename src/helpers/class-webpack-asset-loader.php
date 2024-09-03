@@ -109,7 +109,10 @@ class Webpack_Asset_Loader {
 			$this->get_resource_uri( $handle ),
 			$js_dependencies,
 			$this->get_resource_version( $handle ),
-			true
+			array(
+				'strategy' => 'defer',
+				'in_footer' => true,
+			)
 		);
 	}
 
@@ -254,7 +257,7 @@ class Webpack_Asset_Loader {
 
 		// Remove version number from handle.
 		$unversioned = $this->get_unversioned_path( $handle );
-		return home_url( $this->manifest->{$unversioned} );
+		return isset( $this->manifest->{$unversioned} ) ? home_url( $this->manifest->{$unversioned} ) : '';
 	}
 
 	/**
@@ -270,6 +273,9 @@ class Webpack_Asset_Loader {
 		$unversioned_handle = $this->get_unversioned_path( $handle );
 		if ( isset( $this->asset_data[ $unversioned_handle ] ) ) {
 			return false === $this->asset_data[ $unversioned_handle ] ? null : $this->asset_data[ $unversioned_handle ];
+		}
+		if ( ! isset( $this->manifest->{$unversioned_handle} ) ) {
+			return null;
 		}
 		// The basename might be versioned, let's get the correct name from the manifest file.
 		$resource_basename   = pathinfo( $this->manifest->{$unversioned_handle}, PATHINFO_FILENAME );
@@ -340,14 +346,18 @@ class Webpack_Asset_Loader {
 		}
 
 		// Check whether an entrypoints.json hash exists.
-		$resource_key = $this->manifest->{$handle};
+		$resource_key = isset( $this->manifest->{$handle} ) ? $this->manifest->{$handle} : null;
 		if ( isset( $this->entrypoints->integrity->{$resource_key} ) ) {
 			$hash = end( explode( '-', $this->entrypoints->integrity->{$resource_key} ) );
 			return substr( preg_replace( '/[^\w]/', '', $hash ), 0, 8 );
 		}
 
 		// Use the file modification time as a fallback.
-		$resource_path = trailingslashit( $this->base_directory ) . pathinfo( $this->manifest->{$handle}, PATHINFO_BASENAME );
-		return filemtime( $resource_path );
+		if ( isset( $this->manifest->{$handle} ) ){
+			$resource_path = trailingslashit( $this->base_directory ) . pathinfo( $this->manifest->{$handle}, PATHINFO_BASENAME );
+			return filemtime( $resource_path );
+		}
+
+		return null;
 	}
 }
