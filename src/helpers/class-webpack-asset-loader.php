@@ -256,6 +256,22 @@ class Webpack_Asset_Loader {
 	}
 
 	/**
+	 * Get the URI for a file on the theme directory
+	 *
+	 * @param string $string Path to the file.
+	 * @return string Normalized URL to the file.
+	 */
+	private function get_theme_file_uri( string $string ): string {
+		$theme_uri_path = wp_parse_url( get_template_directory_uri(), PHP_URL_PATH );
+		$file_theme_uri = get_theme_file_uri( $string );
+		$normalized_path =
+			substr_count( $file_theme_uri, $theme_uri_path ) > 1 ?
+			substr_replace( $file_theme_uri, '', strpos( $file_theme_uri, $theme_uri_path ), strlen( $theme_uri_path ) ) :
+			$file_theme_uri;
+		return $normalized_path;
+	}
+
+	/**
 	 * Get the URI of a resource.
 	 *
 	 * This method will return the URI of a resource, using the manifest.json file to get the correct
@@ -267,12 +283,12 @@ class Webpack_Asset_Loader {
 	private function get_resource_uri( string $handle ): string {
 		// Detect if handle has a versioned filename.
 		if ( isset( $this->manifest->{$handle} ) ) {
-			return home_url( $this->manifest->{$handle} );
+			return $this->get_theme_file_uri( $this->manifest->{$handle} );
 		}
 
 		// Remove version number from handle.
 		$unversioned = $this->get_unversioned_path( $handle );
-		return isset( $this->manifest->{$unversioned} ) ? home_url( $this->manifest->{$unversioned} ) : '';
+		return isset( $this->manifest->{$unversioned} ) ? $this->get_theme_file_uri( $this->manifest->{$unversioned} ) : '';
 	}
 
 	/**
