@@ -86,6 +86,15 @@ class Webpack_Asset_Loader {
 	public string $base_directory;
 
 	/**
+	 * Base URI for the assets.
+	 *
+	 * The full asset URI will be built by concatenating this with the manifest.json value
+	 *
+	 * @var string
+	 */
+	public string $base_uri;
+
+	/**
 	 * Build a new Webpack Asset Loader instance.
 	 *
 	 * @param string $prefix A unique prefix for the files managed by this instance, eg. "my-theme".
@@ -93,7 +102,8 @@ class Webpack_Asset_Loader {
 	 */
 	public function __construct(
 		string $prefix,
-		string $base_directory = ''
+		string $base_directory = '',
+		string $base_uri = ''
 	) {
 		$this->prefix = $prefix;
 		if ( ! $base_directory ) {
@@ -106,6 +116,10 @@ class Webpack_Asset_Loader {
 		if ( is_readable( $this->base_directory . '/entrypoints.json' ) ) {
 			$this->entrypoints = wp_json_file_decode( $this->base_directory . '/entrypoints.json' );
 		}
+		if ( ! $base_uri ) {
+			$base_uri = get_template_directory_uri() . '/assets/dist';
+		}
+		$this->base_uri = untrailingslashit( $base_uri );
 	}
 
 	/**
@@ -261,13 +275,15 @@ class Webpack_Asset_Loader {
 	 * @param string $string Path to the file.
 	 * @return string Normalized URL to the file.
 	 */
-	private function get_theme_file_uri( string $string ): string {
-		$theme_uri_path = wp_parse_url( get_template_directory_uri(), PHP_URL_PATH );
-		$file_theme_uri = get_theme_file_uri( $string );
+	private function get_file_uri( string $string ): string {
+		$rel_file_path  = pathinfo( wp_parse_url(  $string, PHP_URL_PATH ), PATHINFO_DIRNAME );
+		$file_uri = ( strpos( $string , '/' ) === 0 ? untrailingslashit( $this->base_uri ) : $this->base_uri ) . $string;
+		$rel_path_count_in_uri = substr_count( $file_uri, $rel_file_path );
+		$rel_file_path_in_uri = strpos( $file_uri, $rel_file_path );
 		$normalized_path =
-			substr_count( $file_theme_uri, $theme_uri_path ) > 1 ?
-			substr_replace( $file_theme_uri, '', strpos( $file_theme_uri, $theme_uri_path ), strlen( $theme_uri_path ) ) :
-			$file_theme_uri;
+			$rel_path_count_in_uri > 1 ?
+			substr_replace( $file_uri, '', $rel_file_path_in_uri, strlen( $rel_file_path ) ) :
+			$file_uri;
 		return $normalized_path;
 	}
 
@@ -283,12 +299,12 @@ class Webpack_Asset_Loader {
 	private function get_resource_uri( string $handle ): string {
 		// Detect if handle has a versioned filename.
 		if ( isset( $this->manifest->{$handle} ) ) {
-			return $this->get_theme_file_uri( $this->manifest->{$handle} );
+			return $this->get_file_uri( $this->manifest->{$handle} );
 		}
 
 		// Remove version number from handle.
 		$unversioned = $this->get_unversioned_path( $handle );
-		return isset( $this->manifest->{$unversioned} ) ? $this->get_theme_file_uri( $this->manifest->{$unversioned} ) : '';
+		return isset( $this->manifest->{$unversioned} ) ? $this->get_file_uri( $this->manifest->{$unversioned} ) : '';
 	}
 
 	/**
