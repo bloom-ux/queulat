@@ -55,7 +55,7 @@ class WP_Editor extends Form_Component {
 		if ( empty( $args['textarea_name'] ) ) {
 			$args['textarea_name'] = $this->get_name();
 		}
-		wp_editor( $this->get_value(), $this->sanitize_id(), $args );
+		wp_editor( $this->get_value() ?? '', $this->sanitize_id(), $args );
 		return ob_get_clean();
 	}
 
