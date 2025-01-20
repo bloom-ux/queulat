@@ -395,7 +395,8 @@ class Webpack_Asset_Loader {
 		// Check whether an entrypoints.json hash exists.
 		$resource_key = isset( $this->manifest->{$handle} ) ? $this->manifest->{$handle} : null;
 		if ( isset( $this->entrypoints->integrity->{$resource_key} ) ) {
-			$hash = end( explode( '-', $this->entrypoints->integrity->{$resource_key} ) );
+			$parts = explode( '-', $this->entrypoints->integrity->{$resource_key} );
+			$hash  = end( $parts );
 			return substr( preg_replace( '/[^\w]/', '', $hash ), 0, 8 );
 		}
 
