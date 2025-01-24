@@ -284,6 +284,7 @@ class Webpack_Asset_Loader {
 			$rel_path_count_in_uri > 1 ?
 			substr_replace( $file_uri, '', $rel_file_path_in_uri, strlen( $rel_file_path ) ) :
 			$file_uri;
+		$normalized_path = apply_filters( 'queulat_webpack_asset_loader_file_uri', $normalized_path, $string );
 		return $normalized_path;
 	}
 
