@@ -276,7 +276,7 @@ class Webpack_Asset_Loader {
 	 * @return string Normalized URL to the file.
 	 */
 	private function get_file_uri( string $string ): string {
-		$rel_file_path  = pathinfo( wp_parse_url(  $string, PHP_URL_PATH ), PATHINFO_DIRNAME );
+		$rel_file_path = pathinfo( wp_parse_url(  $string, PHP_URL_PATH ), PATHINFO_DIRNAME );
 		$file_uri = ( strpos( $string , '/' ) === 0 ? untrailingslashit( $this->base_uri ) : $this->base_uri ) . $string;
 		$rel_path_count_in_uri = substr_count( $file_uri, $rel_file_path );
 		$rel_file_path_in_uri = strpos( $file_uri, $rel_file_path );
@@ -284,7 +284,7 @@ class Webpack_Asset_Loader {
 			$rel_path_count_in_uri > 1 ?
 			substr_replace( $file_uri, '', $rel_file_path_in_uri, strlen( $rel_file_path ) ) :
 			$file_uri;
-		$normalized_path = apply_filters( 'queulat_webpack_asset_loader_file_uri', $normalized_path, $string );
+		$normalized_path = apply_filters( 'queulat_webpack_asset_loader_file_uri', $normalized_path, $string, $this->base_uri );
 		return $normalized_path;
 	}
 
