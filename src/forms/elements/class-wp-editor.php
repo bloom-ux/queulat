@@ -88,10 +88,11 @@ class WP_Editor extends Form_Component {
 				wp_editor( $this->get_value(), $this->sanitize_id(), $args );
 			echo '</div>';
 		echo '</div>';
+		wp_enqueue_editor();
 		wp_enqueue_script(
 			'queulat-element-wp-editor',
 			plugins_url( 'js/element-wp-editor.js', __FILE__ ),
-			array( 'jquery', 'underscore' ),
+			array( 'jquery', 'underscore', 'editor', 'wp-tinymce' ),
 			filemtime( plugin_dir_path( __FILE__ ) . 'js/element-wp-editor.js' ),
 		);
 		return ob_get_clean();

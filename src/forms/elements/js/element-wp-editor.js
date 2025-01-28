@@ -13,10 +13,6 @@
 				.find('.queulat-wp-editor__editor')
 				.find('textarea')
 				.attr('id');
-			const editors = tinymce.editors;
-			if ( editors.length === 0 ) {
-				console.warn( 'No editors found' );
-			}
 			const editorIndex = tinymce.editors.reduce((acc, editor, index) => {
 				const editorSelector = editor?.settings?.selector;
 				const selectedElement = document.querySelector(editorSelector);
@@ -25,11 +21,13 @@
 				return doTheyMatch ? index : acc;
 			}, null);
 			if ( editorIndex === null ) {
-				console.warn( 'Editor not found' );
+				console.info( 'Editor not found, initializing' );
+				window.switchEditors.go( textareaId, 'tmce' );
+			} else {
+				const editorSettings = tinymce.editors[editorIndex].settings;
+				tinymce.editors[editorIndex].remove();
+				tinymce.init(editorSettings);
 			}
-			const editorSettings = tinymce.editors[editorIndex].settings;
-			tinymce.editors[editorIndex].remove();
-			tinymce.init(editorSettings);
 			$preview.addClass('hidden');
 			$editor.removeClass('hidden');
 		});
