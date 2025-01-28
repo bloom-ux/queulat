@@ -13,11 +13,20 @@
 				.find('.queulat-wp-editor__editor')
 				.find('textarea')
 				.attr('id');
+			const editors = tinymce.editors;
+			if ( editors.length === 0 ) {
+				console.warn( 'No editors found' );
+			}
 			const editorIndex = tinymce.editors.reduce((acc, editor, index) => {
-				return editor.settings.selector === `#${textareaId}`
-					? index
-					: acc;
+				const editorSelector = editor?.settings?.selector;
+				const selectedElement = document.querySelector(editorSelector);
+				const selectedElementId = selectedElement.id;
+				const doTheyMatch = selectedElementId === textareaId;
+				return doTheyMatch ? index : acc;
 			}, null);
+			if ( editorIndex === null ) {
+				console.warn( 'Editor not found' );
+			}
 			const editorSettings = tinymce.editors[editorIndex].settings;
 			tinymce.editors[editorIndex].remove();
 			tinymce.init(editorSettings);
