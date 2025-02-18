@@ -6,17 +6,23 @@
 		var reindexRows = function( $container ) {
 			$container.find('.js-queulat-repeater__row').each( function( i, row ){
 				$( row ).data( 'row', i );
-				reindexRowControls( $( row ) );
+				$( row ).attr( 'data-row', i );
+				reindexRowControls( i, $( row ) );
 			});
 		};
-		var reindexRowControls = function( $row ) {
-			return $row.find('.js-queulat-repeater__control').each( function( i, obj ){
-				var rowIndex     = parseInt( $row.data('row'), 10 );
-				var nameTemplate = $( obj ).data('name');
+		var reindexRowControls = function( index, $row ) {
+			var controlsSelector = [
+				'.js-queulat-repeater__control',
+				'.js-queulat-repeater__control input'
+			];
+			return $row.find( controlsSelector.join(',') ).each( function( i, obj ){
+				var rowIndex     = index;
+				var nameTemplate = $( obj ).data('name') || $( obj ).closest('.js-queulat-repeater__control').data('name');
 				var newName      = nameTemplate.replace('__i__', rowIndex );
 				$( obj ).attr( 'name', newName );
 				$( obj ).data( 'row', rowIndex );
-				if ( $( obj ).hasClass('js-queulat-wp-media') ) {
+				$( obj ).attr( 'data-row', rowIndex );
+				if ( $( obj ).hasClass('js-queulat-wp-media')  ) {
 					var $itemTemplate = $( obj ).find('.tmpl-wpmedia-item');
 					var regex = /name=".+?"/
 					var newItemTemplate = $itemTemplate.html().replace( regex, 'name=\"'+newName+'\"');
@@ -26,16 +32,20 @@
 		};
 		$( 'body' ).on( 'click', '.js-queulat-repeater__add', function( event ){
 			event.preventDefault();
-			var $container = $( this ).closest('.js-queulat-repeater');
-			var $rows      = $container.find('.js-queulat-repeater__row');
-			var $lastRow   = $rows.filter(':last');
-			var $clonedRow = $lastRow.clone();
-			$clonedRow.data('row', $rows.length );
+			var $container   = $( this ).closest('.js-queulat-repeater');
+			var $rows        = $container.find('.js-queulat-repeater__row');
+			var $lastRow     = $rows.filter(':last');
+			var lastRowIndex = parseInt( $lastRow.data('row'), 10 );
+			var clonedRow    = $lastRow[0].outerHTML;
+			var regex        = new RegExp('(\\[[^\\]]+\\])\\[' + lastRowIndex + '\\](\\[[^\\]]+\\])', 'gm');
+			var newClonedRow = clonedRow.replaceAll( regex, '$1\['+(lastRowIndex+1)+'\]$2' );
+			$lastRow.after( newClonedRow );
+
+			var $clonedRow = $container.find('.js-queulat-repeater__row').filter(':last');
 			$clonedRow.find('div.queulat-wpmedia-item').remove();
-			$lastRow.after( $clonedRow );
-			reindexRowControls( $clonedRow, true );
-			$clonedRow.find('input, select').val('');
+			$clonedRow.find('input:not([type="radio"],[type="checkbox"]), select').val('');
 			$clonedRow.find('input, select').filter(':first').trigger('focus');
+			reindexRows( $container );
 		} ).on( 'click', '.js-queulat-repeater__remove', function( event ){
 			var $container = $(this).closest('.js-queulat-repeater');
 			var $rows      = $container.find('.js-queulat-repeater__row');
