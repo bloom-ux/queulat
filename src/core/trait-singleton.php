@@ -1,7 +1,4 @@
 <?php
-
-namespace Queulat;
-
 /**
  * Singleton pattern trait.
  *
@@ -11,7 +8,19 @@ namespace Queulat;
  * @package Queulat
  * @since   0.1.0
  */
+
+namespace Queulat;
+
+/**
+ * Use this trait to implement a singleton pattern on your class.
+ */
 trait Singleton {
+
+	/**
+	 * Instance of the class
+	 *
+	 * @var ?static
+	 */
 	protected static $instance = null;
 
 	/**

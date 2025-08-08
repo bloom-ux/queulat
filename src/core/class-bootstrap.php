@@ -1,10 +1,4 @@
 <?php
-
-namespace Queulat;
-
-use Queulat\Forms\Node_Factory;
-use Queulat\Forms\Node_Factory_Argument_Handler;
-
 /**
  * Bootstrap class for initializing Queulat plugin functionality.
  *
@@ -13,6 +7,15 @@ use Queulat\Forms\Node_Factory_Argument_Handler;
  *
  * @package Queulat
  * @since   0.1.0
+ */
+
+namespace Queulat;
+
+use Queulat\Forms\Node_Factory;
+use Queulat\Forms\Node_Factory_Argument_Handler;
+
+/**
+ * Hook Queulat into WordPress
  */
 class Bootstrap {
 	/**
@@ -25,16 +28,21 @@ class Bootstrap {
 	 * @return void
 	 */
 	public function init() {
-		add_action(
-			'muplugins_loaded',
-			function () {
-				( new Generator\Admin\CPT_Plugin() )->init();
-			}
-		);
+		add_action( 'muplugins_loaded', array( $this, 'init_generator_admin' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ), 9999 );
 		$this->register_default_node_factory_args();
 		load_muplugin_textdomain( 'queulat', str_replace( WPMU_PLUGIN_DIR, '', __DIR__ ) . '/../../languages' );
 	}
+
+	/**
+	 * Initialize custom post type generator admin screen
+	 *
+	 * @return void
+	 */
+	public function init_generator_admin() {
+		( new Generator\Admin\CPT_Plugin() )->init();
+	}
+
 	/**
 	 * Enqueue admin assets for the plugin.
 	 *
