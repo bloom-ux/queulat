@@ -1,4 +1,9 @@
 <?php
+/**
+ * Abstract class for generating simple administration pages
+ *
+ * @package Queulat
+ */
 
 namespace Queulat\Helpers;
 
@@ -52,7 +57,7 @@ abstract class Abstract_Admin {
 	/**
 	 * Sanitize form pdata
 	 *
-	 * @param array $input An array or iterable of form elements/components
+	 * @param array $input An array or iterable of form elements/components.
 	 * @return array
 	 */
 	abstract public function sanitize_data( $input ): array;
@@ -60,7 +65,7 @@ abstract class Abstract_Admin {
 	/**
 	 * Get data validation rules
 	 *
-	 * @param array $sanitized_data Sanitized input data
+	 * @param array $sanitized_data Sanitized input data.
 	 * @return array An array of validation rules with form element names as keys
 	 */
 	abstract public function get_validation_rules( array $sanitized_data ): array;
@@ -77,7 +82,7 @@ abstract class Abstract_Admin {
 	/**
 	 * Define the action performed by the form
 	 *
-	 * @param array $data Validated and sanitized data
+	 * @param array $data Validated and sanitized data.
 	 * @return bool
 	 */
 	abstract public function process_data( array $data ): bool;
@@ -109,7 +114,7 @@ abstract class Abstract_Admin {
 	 * @return string Success URL
 	 */
 	public function get_redirect_url(): string {
-		// get the relative path to the WordPress Admin
+		// get the relative path to the WordPress Admin.
 		$relative_admin_url = str_replace( home_url(), '', admin_url() );
 		$redirect_url       = str_replace( $relative_admin_url, '', filter_input( INPUT_POST, '_wp_http_referer', FILTER_SANITIZE_URL ) );
 		return $redirect_url;
@@ -208,7 +213,7 @@ abstract class Abstract_Admin {
 						'type'  => 'submit',
 						'class' => 'button button-primary',
 					),
-					'text_content' => _x( 'Save', 'admin form', 'gutenpress' ),
+					'text_content' => _x( 'Save', 'admin form', 'queulat' ),
 				)
 			)
 		);
@@ -225,7 +230,7 @@ abstract class Abstract_Admin {
 		);
 
 		echo '<div class="wrap">';
-		echo "<h1>{$this->get_title()}</h1>";
+		echo '<h1>' . esc_html( $this->get_title() ) . '</h1>';
 
 		/**
 		 * Allows for customization of the search form or printing stuff just before it
@@ -235,7 +240,7 @@ abstract class Abstract_Admin {
 		 */
 		do_action( "queulat_abstract_admin_form_{$this->get_id()}", $form, $this );
 
-		echo (string) $form;
+		echo (string) $form; //phpcs:ignore
 		echo '</div>';
 	}
 
@@ -249,7 +254,7 @@ abstract class Abstract_Admin {
 	 * @return void
 	 */
 	public function process_form() {
-		if ( filter_input( INPUT_POST, 'action', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) != $this->get_id() . '__submit' ) {
+		if ( filter_input( INPUT_POST, 'action', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) !== $this->get_id() . '__submit' ) {
 			return;
 		}
 		check_admin_referer( "{$this->get_id()}__submit", "_{$this->get_id()}__submit-nonce" );
@@ -271,7 +276,6 @@ abstract class Abstract_Admin {
 			wp_safe_redirect( add_query_arg( $this->get_success_url_params(), $this->get_redirect_url() ), 303 );
 			exit;
 		}
-		return;
 	}
 
 	/**

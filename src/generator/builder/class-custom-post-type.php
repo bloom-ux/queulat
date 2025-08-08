@@ -5,6 +5,13 @@ namespace Queulat\Generator\Builder;
 use Queulat\Helpers\Arrays;
 
 class Custom_Post_Type {
+
+
+	/**
+	 * Parameters to build the custom post type, sanitized
+	 *
+	 * @var array
+	 */
 	private $params = array();
 
 	/**
@@ -26,11 +33,22 @@ class Custom_Post_Type {
 		'theme',
 	);
 
+	/**
+	 * Build a new custom post type generator
+	 *
+	 * @param array $params Input for the generator.
+	 */
 	public function __construct( array $params = array() ) {
 		if ( $params ) {
 			$this->params = $this->sanitize_input( $params );
 		}
 	}
+
+	/**
+	 * Get list of features that a custom post type can support
+	 *
+	 * @return array Custom post type possible features as slug => label
+	 */
 	public static function get_supports(): array {
 		return array(
 			'title'           => __( 'Title', 'queulat' ),
@@ -46,6 +64,13 @@ class Custom_Post_Type {
 			'post-formats'    => __( 'Post formats', 'queulat' ),
 		);
 	}
+
+	/**
+	 * Sanitize the input given by the user to build the custom post type definition
+	 *
+	 * @param array $input Data sent by the user.
+	 * @return array Sanitized data
+	 */
 	public function sanitize_input( array $input ): array {
 		$flat      = Arrays::flatten( $input );
 		$sanitized = array();
@@ -84,6 +109,7 @@ class Custom_Post_Type {
 				case 'show_in_rest':
 				case 'rewrite_enable':
 					$sanitized[ $key ] = (bool) $val;
+					break;
 				default:
 					if ( stripos( $key, 'supports.' ) !== false ) {
 						if ( array_key_exists( $val, static::get_supports() ) ) {
