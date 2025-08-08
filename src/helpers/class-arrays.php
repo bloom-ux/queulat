@@ -30,7 +30,7 @@ class Arrays {
 	 * @param  iterable|object $array
 	 * @return bool
 	 */
-	public static function is_associative($array) : bool {
+	public static function is_associative( $array ): bool {
 		$keys = is_array( $array ) ? array_keys( $array ) : array_keys( $array->getArrayCopy() );
 		return array_keys( $keys ) !== $keys;
 	}
@@ -43,7 +43,7 @@ class Arrays {
 	 * @return array Array with dotted keys
 	 * @see \Minwork\Helper\Arr for mode constants.
 	 */
-	public static function flatten( array $array, int $mode = \Minwork\Helper\Arr::UNPACK_ALL ) : array {
+	public static function flatten( array $array, int $mode = \Minwork\Helper\Arr::UNPACK_ALL ): array {
 		return \Minwork\Helper\Arr::unpack( $array, $mode );
 	}
 
@@ -54,7 +54,7 @@ class Arrays {
 	 * @param  string $glue  glue used in flattening
 	 * @return array  the unflattened array
 	 */
-	public static function reverse_flatten(array $array, string $glue = '.') : array {
+	public static function reverse_flatten( array $array, string $glue = '.' ): array {
 		$return = array();
 		foreach ( $array as $key => $value ) {
 			if ( stripos( $key, $glue ) !== false ) {
@@ -86,7 +86,7 @@ class Arrays {
 	 * @param  callable $callback A custom function for filtering (by default, uses array_filter)
 	 * @return array              Filtered array
 	 */
-	public static function filter_recursive(array $array, $callback = null) {
+	public static function filter_recursive( array $array, $callback = null ) {
 		foreach ( $array as &$value ) {
 			if ( is_array( $value ) ) {
 				$value = $callback === null ? static::filter_recursive( $value ) : static::filter_recursive( $value, $callback );

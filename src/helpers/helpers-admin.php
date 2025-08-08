@@ -11,8 +11,8 @@ use Queulat\Helpers\Arrays;
  * @param string $path The desired path
  * @return string
  */
-function queulat_url( string $path = '' ) : string {
-	return plugins_url( $path, dirname( dirname( __FILE__ ) ) );
+function queulat_url( string $path = '' ): string {
+	return plugins_url( $path, dirname( __DIR__ ) );
 }
 
 /**
@@ -22,9 +22,9 @@ function queulat_url( string $path = '' ) : string {
  * @param array $rules Sanitization rules. Keys are regular expressions to match against the input array keys, values are an array of callback functions.
  * @return array Sanitized data.
  */
-function queulat_sanitizer( array $data, array $rules ) : array {
+function queulat_sanitizer( array $data, array $rules ): array {
 	$input     = Arrays::flatten( $data );
-	$sanitized = [];
+	$sanitized = array();
 	foreach ( $input as $key => $val ) {
 		foreach ( $rules as $rule => $callbacks ) {
 			$pattern = str_replace( '\*', '[^\.]*', preg_quote( $rule ) );

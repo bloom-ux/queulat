@@ -16,6 +16,7 @@ trait Singleton {
 
 	/**
 	 * Return instantiated class
+	 *
 	 * @return static
 	 */
 	public static function get_instance() {

@@ -33,15 +33,15 @@ class Input extends HTML_Form_Element {
 	 * @since 0.1.0
 	 * @return string Tag name.
 	 */
-	public function get_tag_name() : string {
+	public function get_tag_name(): string {
 		return 'input';
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public static function get_element_attributes() : array {
-		return [
+	public static function get_element_attributes(): array {
+		return array(
 			'accept',
 			'alt',
 			'autocomplete',
@@ -71,7 +71,7 @@ class Input extends HTML_Form_Element {
 			'type',
 			'value',
 			'width',
-		];
+		);
 	}
 	/**
 	 * Set the input value.
@@ -80,7 +80,7 @@ class Input extends HTML_Form_Element {
 	 * @param mixed $value Input value.
 	 * @return Node_Interface Current instance for chaining.
 	 */
-	public function set_value( $value ) : Node_Interface {
+	public function set_value( $value ): Node_Interface {
 		$this->set_attribute( 'value', $value );
 		return $this;
 	}
@@ -96,7 +96,7 @@ class Input extends HTML_Form_Element {
 	/**
 	 * @inheritDoc
 	 */
-	public function __toString() : string {
+	public function __toString(): string {
 		return '<input ' . $this->render_attributes() . '>';
 	}
 }

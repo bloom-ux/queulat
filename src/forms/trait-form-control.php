@@ -19,7 +19,7 @@ trait Form_Control_Trait {
 	 * @inheritDoc
 	 * @suppress PhanTypeMismatchReturn
 	 */
-	public function set_label( string $label ) : Node_Interface {
+	public function set_label( string $label ): Node_Interface {
 		$this->label = $label;
 		return $this;
 	}
@@ -30,7 +30,7 @@ trait Form_Control_Trait {
 	 * @since 0.1.0
 	 * @return string The label text.
 	 */
-	public function get_label() : string {
+	public function get_label(): string {
 		return $this->label;
 	}
 
@@ -38,7 +38,7 @@ trait Form_Control_Trait {
 	 * @inheritDoc
 	 * @suppress PhanTypeMismatchReturn
 	 */
-	public function set_name( string $name ) : Node_Interface {
+	public function set_name( string $name ): Node_Interface {
 		if ( $this instanceof Attributes_Interface ) {
 			$this->set_attribute( 'name', $name );
 		} else {
@@ -53,7 +53,7 @@ trait Form_Control_Trait {
 	 * @since 0.1.0
 	 * @return string The control name.
 	 */
-	public function get_name() : string {
+	public function get_name(): string {
 		return $this instanceof Attributes_Interface ? $this->get_attribute( 'name' ) : $this->name;
 	}
 }

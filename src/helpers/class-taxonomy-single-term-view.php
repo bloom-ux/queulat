@@ -9,10 +9,10 @@ use Queulat\Forms\Element\Select;
 class Taxonomy_Single_Term_View {
 	public function __invoke( $post, $metabox_args ) {
 		$terms    = get_terms(
-			[
+			array(
 				'taxonomy'   => $metabox_args['args']['taxonomy'],
 				'hide_empty' => false,
-			]
+			)
 		);
 		$selected = get_the_terms( $post, $metabox_args['args']['taxonomy'] );
 		if ( is_wp_error( $terms ) || empty( $terms ) ) {
@@ -25,15 +25,15 @@ class Taxonomy_Single_Term_View {
 		$node              = count( $terms ) <= $max_radio_options ? Input_Radio::class : Select::class;
 		$radio             = Node_Factory::make(
 			$node,
-			[
+			array(
 				'name'       => "tax_input[{$metabox_args['args']['taxonomy']}]",
 				'label'      => $metabox_args['title'],
 				'options'    => wp_list_pluck( $terms, 'name', 'term_id' ),
 				'value'      => $value,
-				'attributes' => [
+				'attributes' => array(
 					'id' => "tax-input__{$metabox_args['args']['taxonomy']}",
-				],
-			]
+				),
+			)
 		);
 		echo $radio;
 	}

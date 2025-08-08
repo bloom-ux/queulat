@@ -7,7 +7,7 @@ use Queulat\Validator\Validator_Interface;
 class Validator {
 	protected $data;
 	protected $rules;
-	protected $errors    = [];
+	protected $errors    = array();
 	protected $is_valid  = false;
 	protected $validated = false;
 
@@ -19,13 +19,12 @@ class Validator {
 
 		$this->data  = $data;
 		$this->rules = $rules;
-
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function is_valid() : bool {
+	public function is_valid(): bool {
 
 		if ( $this->validated ) {
 			return $this->is_valid;
@@ -68,8 +67,8 @@ class Validator {
 	 * Validate a single piece of data against a validator.
 	 *
 	 * @since 0.1.0
-	 * @param string                $name      Field name.
-	 * @param mixed                 $value     Field value.
+	 * @param string              $name      Field name.
+	 * @param mixed               $value     Field value.
 	 * @param Validator_Interface $validator Validator instance.
 	 * @return void
 	 */
@@ -82,15 +81,14 @@ class Validator {
 	/**
 	 * @return bool
 	 */
-	public function is_invalid() : bool {
+	public function is_invalid(): bool {
 		return ! $this->is_valid();
 	}
 
 	/**
 	 * @return array
 	 */
-	public function get_error_messages() : array {
+	public function get_error_messages(): array {
 		return $this->errors;
 	}
-
 }

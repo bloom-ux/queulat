@@ -27,13 +27,13 @@ class Bootstrap {
 	public function init() {
 		add_action(
 			'muplugins_loaded',
-			function() {
+			function () {
 				( new Generator\Admin\CPT_Plugin() )->init();
 			}
 		);
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ], 9999 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ), 9999 );
 		$this->register_default_node_factory_args();
-		load_muplugin_textdomain( 'queulat', str_replace( WPMU_PLUGIN_DIR, '', __DIR__ ) .'/../../languages' );
+		load_muplugin_textdomain( 'queulat', str_replace( WPMU_PLUGIN_DIR, '', __DIR__ ) . '/../../languages' );
 	}
 	/**
 	 * Enqueue admin assets for the plugin.
@@ -47,7 +47,7 @@ class Bootstrap {
 		static $asset_versions;
 		$versions_path  = __DIR__ . '/../../dist/manifest.json';
 		$asset_versions = json_decode( file_get_contents( $versions_path ) );
-		wp_enqueue_style( 'queulat-forms', plugins_url( '..' . $asset_versions->{'dist/admin.css'}, __DIR__ ), [], null, 'all' );
+		wp_enqueue_style( 'queulat-forms', plugins_url( '..' . $asset_versions->{'dist/admin.css'}, __DIR__ ), array(), null, 'all' );
 	}
 	/**
 	 * Register default argument handlers for the node factory.
@@ -59,7 +59,7 @@ class Bootstrap {
 	 * @return void
 	 */
 	private function register_default_node_factory_args() {
-		$handlers = [
+		$handlers = array(
 			new Node_Factory_Argument_Handler( 'attributes', 'set_attribute', Node_Factory::CALL_TYPE_KEY_VALUE ),
 			new Node_Factory_Argument_Handler( 'label', 'set_label' ),
 			new Node_Factory_Argument_Handler( 'name', 'set_name' ),
@@ -68,7 +68,7 @@ class Bootstrap {
 			new Node_Factory_Argument_Handler( 'value', 'set_value' ),
 			new Node_Factory_Argument_Handler( 'text_content', 'set_text_content' ),
 			new Node_Factory_Argument_Handler( 'children', 'append_child', Node_Factory::CALL_TYPE_VALUE_ITEMS ),
-		];
+		);
 		foreach ( $handlers as $handler ) {
 			Node_Factory::register_argument( $handler );
 		}

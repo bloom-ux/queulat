@@ -57,7 +57,7 @@ class Min_Length implements Validator_Interface {
 	 * @param string $value Value to validate.
 	 * @return bool True if valid, false otherwise.
 	 */
-	public function is_valid( $value ) : bool {
+	public function is_valid( $value ): bool {
 		$val_length = function_exists( 'mb_strlen' ) ? mb_strlen( $value, $this->encoding ) : strlen( $value );
 		$val_length = (int) $val_length;
 		return $val_length >= $this->min_length;
@@ -68,7 +68,7 @@ class Min_Length implements Validator_Interface {
 	 * @since 0.1.0
 	 * @return string Error message.
 	 */
-	public function get_message() : string {
+	public function get_message(): string {
 		return sprintf( _x( 'You must type at least %d characters on this field', 'queulat validator message', 'queulat' ), $this->min_length );
 	}
 }

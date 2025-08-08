@@ -23,172 +23,172 @@ use Queulat\Helpers\Strings;
  * Generate an admin page for creating a new Custom Post Type plugin
  */
 class CPT_Plugin extends Abstract_Admin {
-	public function get_id() : string {
+	public function get_id(): string {
 		return 'queulat-cpt-plugin-generator';
 	}
-	public function get_title() : string {
+	public function get_title(): string {
 		return _x( 'Generate Custom Post Type Plugin', 'admin title', 'queulat' );
 	}
-	public function get_menu_title() : string {
+	public function get_menu_title(): string {
 		return _x( 'Generate Custom Post Type Plugin', 'admin menu', 'queulat' );
 	}
-	public function get_parent_page() : string {
+	public function get_parent_page(): string {
 		return 'tools.php';
 	}
-	public function get_icon() : string {
+	public function get_icon(): string {
 		return '';
 	}
-	public function get_form_elements() : array {
-		return [
+	public function get_form_elements(): array {
+		return array(
 			Node_Factory::make(
 				Input_Text::class,
-				[
+				array(
 					'label'      => _x( 'Post Type slug', 'cpt generator label', 'queulat' ),
 					'name'       => 'slug',
-					'properties' => [
+					'properties' => array(
 						'description' => _x( 'A <strong>singular</strong> slug, used as <code>post_type</code> on new entries. Max. 20 characters, no capital letters or spaces', 'cpt generator', 'queulat' ),
-					],
-				]
+					),
+				)
 			),
 			Node_Factory::make(
 				Input_Text::class,
-				[
+				array(
 					'label'      => _x( 'Label', 'cpt generator label', 'queulat' ),
 					'name'       => 'label',
-					'properties' => [
+					'properties' => array(
 						'description' => _x( 'A <strong>plural</strong> descriptive name for the post type', 'cpt generator', 'queulat' ),
-					],
-				]
+					),
+				)
 			),
 			Node_Factory::make(
 				Textarea::class,
-				[
+				array(
 					'label'      => _x( 'Description', 'cpt generator label', 'queulat' ),
 					'name'       => 'description',
-					'attributes' => [
+					'attributes' => array(
 						'placeholder' => _x( 'A short descriptive summary of what the post type is', 'cpt generator placeholder', 'queulat' ),
 						'rows'        => 5,
-					],
-				]
+					),
+				)
 			),
 			Node_Factory::make(
 				Input_Radio::class,
-				[
+				array(
 					'label'   => _x( 'Public', 'cpt generator label', 'queulat' ),
 					'name'    => 'public',
-					'options' => [
+					'options' => array(
 						'1' => __( 'True: Post type is intended for public use. This includes on the front end and in wp-admin', 'queulat' ),
 						'0' => __( 'False: Post type is not intended to be used publicly and should generally be unavailable in wp-admin and on the front end unless explicitly planned for elsewhere', 'queulat' ),
-					],
-				]
+					),
+				)
 			),
 			Node_Factory::make(
 				Input_Checkbox::class,
-				[
+				array(
 					'label'   => _x( 'Supports', 'cpt generator label', 'queulat' ),
 					'name'    => 'supports',
 					'options' => Custom_Post_Type::get_supports(),
-				]
+				)
 			),
 			Node_Factory::make(
 				Yes_No::class,
-				[
+				array(
 					'label'      => __( 'Hierarchical', 'queulat' ),
 					'name'       => 'hierarchical',
-					'properties' => [
+					'properties' => array(
 						'description' => __( "Whether the post type is hierarchical. Allows Parent to be specified. The 'supports' parameter should contain 'page-attributes' to show the parent select box on the editor page", 'queulat' ),
-					],
-				]
+					),
+				)
 			),
 			Node_Factory::make(
 				Yes_No::class,
-				[
+				array(
 					'label'      => __( 'Has archive', 'queulat' ),
 					'name'       => 'has_archive',
-					'properties' => [
+					'properties' => array(
 						'description' => __( 'Enables post type archives', 'queulat' ),
-					],
-				]
+					),
+				)
 			),
 			Node_Factory::make(
 				Fieldset::class,
-				[
-					'properties' => [
+				array(
+					'properties' => array(
 						'label' => __( 'Rewrite', 'queulat' ),
-					],
-					'children'   => [
+					),
+					'children'   => array(
 						Node_Factory::make(
 							Yes_No::class,
-							[
+							array(
 								'label' => 'Enable',
 								'name'  => 'rewrite_enable',
-							]
+							)
 						),
 						Node_Factory::make(
 							Input_Text::class,
-							[
+							array(
 								'label'      => 'Slug',
 								'name'       => 'rewrite[slug]',
-								'attributes' => [
+								'attributes' => array(
 									'class'       => 'regular-text',
 									'placeholder' => 'Customize the pemastruct slug',
-								],
-							]
+								),
+							)
 						),
 						Node_Factory::make(
 							Yes_No::class,
-							[
+							array(
 								'label' => 'Prefix with "front"',
 								'name'  => 'rewrite[with_front]',
-							]
+							)
 						),
 						Node_Factory::make(
 							Yes_No::class,
-							[
+							array(
 								'label' => 'Build feeds permastruct',
 								'name'  => 'rewrite[feeds]',
-							]
+							)
 						),
 						Node_Factory::make(
 							Yes_No::class,
-							[
+							array(
 								'label' => 'Build pagination permastruct',
 								'name'  => 'rewrite[pages]',
-							]
+							)
 						),
-					],
-				]
+					),
+				)
 			),
 			Node_Factory::make(
 				Yes_No::class,
-				[
+				array(
 					'label' => 'Can export',
 					'name'  => 'can_export',
-				]
+				)
 			),
 			Node_Factory::make(
 				Yes_No::class,
-				[
+				array(
 					'label' => 'Delete with user',
 					'name'  => 'delete_with_user',
-				]
+				)
 			),
 			Node_Factory::make(
 				Yes_No::class,
-				[
+				array(
 					'label' => 'Show in REST API',
 					'name'  => 'show_in_rest',
-				]
+				)
 			),
 			Node_Factory::make(
 				Select::class,
-				[
+				array(
 					'label'   => _x( 'Show in menu', 'cpt generator label', 'queulat' ),
 					'name'    => 'show_in_menu',
 					'options' => $this->get_parent_menus(),
-				]
+				)
 			),
-		];
+		);
 	}
 
 	/**
@@ -198,10 +198,10 @@ class CPT_Plugin extends Abstract_Admin {
 	 */
 	private function get_parent_menus() {
 		global $menu;
-		$options = [
+		$options = array(
 			'no_show'   => esc_html_x( 'Do not display in the admin menu', 'cpt option', 'queulat' ),
 			'top_level' => esc_html_x( 'Display as a top level menu', 'cpt option', 'queulat' ),
-		];
+		);
 		foreach ( $menu as $item ) {
 			if ( ! empty( $item[0] ) ) {
 				$options[ $item[2] ] = $item[0];
@@ -210,30 +210,30 @@ class CPT_Plugin extends Abstract_Admin {
 		return $options;
 	}
 
-	public function sanitize_data( $input ) : array {
+	public function sanitize_data( $input ): array {
 		$builder = new Custom_Post_Type();
 		return $builder->sanitize_input( $input );
 	}
 
-	public function get_validation_rules( array $sanitized_data ) : array {
-		$validations = [
-			'slug' => [ new Is_Required(), new Max_Length( 20 ), new Value_Not_In( Custom_Post_Type::$reserved_keywords ) ],
-		];
+	public function get_validation_rules( array $sanitized_data ): array {
+		$validations = array(
+			'slug' => array( new Is_Required(), new Max_Length( 20 ), new Value_Not_In( Custom_Post_Type::$reserved_keywords ) ),
+		);
 		if ( isset( $sanitized_data['show_in_menu'] ) && ! is_bool( $sanitized_data['show_in_menu'] ) ) {
-			$validations['show_in_menu'] = [ new Value_In( array_keys( $this->get_parent_menus() ) ) ];
+			$validations['show_in_menu'] = array( new Value_In( array_keys( $this->get_parent_menus() ) ) );
 		}
 		return $validations;
 	}
 
-	public function process_data( array $data ) : bool {
+	public function process_data( array $data ): bool {
 		$slug = $data['slug'];
 		unset( $data['slug'] );
 
 		// set the post capabilities
-		$data['capability_type'] = [
+		$data['capability_type'] = array(
 			$slug,
 			Strings::plural( $slug ),
-		];
+		);
 		$data['map_meta_cap']    = true;
 
 		$plugin = new Custom_Post_Type_Plugin( $slug, $data );
@@ -242,13 +242,13 @@ class CPT_Plugin extends Abstract_Admin {
 		return true;
 	}
 
-	public function get_redirect_url() : string {
+	public function get_redirect_url(): string {
 		return admin_url( 'plugins.php' );
 	}
 
-	public function success_url_params() : array {
-		return [
+	public function success_url_params(): array {
+		return array(
 			'cpt-plugin-created' => 'ok',
-		];
+		);
 	}
 }

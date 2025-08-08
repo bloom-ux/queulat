@@ -6,7 +6,7 @@ use Queulat\Forms;
 
 class WP_Gallery extends WP_Media {
 	public function get_defaults() {
-		return [
+		return array(
 			'title'    => $this->get_label(),
 			'multiple' => 'add',
 			'button'   => array(
@@ -15,7 +15,7 @@ class WP_Gallery extends WP_Media {
 			'library'  => array(
 				'type' => 'image',
 			),
-		];
+		);
 	}
 	public function get_upload_button_text() {
 		return _x( 'Upload or select some existing images', 'WP_Gallery button text', 'queulat' );

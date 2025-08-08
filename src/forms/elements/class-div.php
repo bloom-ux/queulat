@@ -17,14 +17,14 @@ class Div extends HTML_Element {
 	/**
 	 * @inheritDoc
 	 */
-	public function get_tag_name() : string {
+	public function get_tag_name(): string {
 		return 'div';
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function __toString() : string {
+	public function __toString(): string {
 		$out      = '<' . $this->get_tag_name() . $this->render_attributes() . '>';
 			$out .= $this->get_text_content();
 		foreach ( $this->get_children() as $child ) {

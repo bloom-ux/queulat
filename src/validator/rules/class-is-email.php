@@ -18,7 +18,7 @@ class Is_Email implements Validator_Interface {
 	 * @param string $value Value to validate.
 	 * @return bool True if valid, false otherwise.
 	 */
-	public function is_valid( $value ) : bool {
+	public function is_valid( $value ): bool {
 		return is_email( $value );
 	}
 	/**
@@ -27,7 +27,7 @@ class Is_Email implements Validator_Interface {
 	 * @since 0.1.0
 	 * @return string Error message.
 	 */
-	public function get_message() : string {
+	public function get_message(): string {
 		return __( 'Please enter a valid e-mail address', 'queulat' );
 	}
 }

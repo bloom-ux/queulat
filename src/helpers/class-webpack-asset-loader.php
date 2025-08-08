@@ -139,7 +139,7 @@ class Webpack_Asset_Loader {
 			$js_dependencies,
 			$this->get_resource_version( $handle ),
 			array(
-				'strategy' => 'defer',
+				'strategy'  => 'defer',
 				'in_footer' => true,
 			)
 		);
@@ -222,7 +222,7 @@ class Webpack_Asset_Loader {
 	 * @return string The prefixed handle of the script.
 	 */
 	public function register_script( string $path ): string {
-		$basename = pathinfo( $path, PATHINFO_BASENAME );
+		$basename    = pathinfo( $path, PATHINFO_BASENAME );
 		$unversioned = $this->get_unversioned_path( $basename );
 		if ( ! isset( $this->manifest->{$unversioned} ) ) {
 			return $path;
@@ -276,15 +276,15 @@ class Webpack_Asset_Loader {
 	 * @return string Normalized URL to the file.
 	 */
 	private function get_file_uri( string $string ): string {
-		$rel_file_path = pathinfo( wp_parse_url(  $string, PHP_URL_PATH ), PATHINFO_DIRNAME );
-		$file_uri = ( strpos( $string , '/' ) === 0 ? untrailingslashit( $this->base_uri ) : $this->base_uri ) . $string;
+		$rel_file_path         = pathinfo( wp_parse_url( $string, PHP_URL_PATH ), PATHINFO_DIRNAME );
+		$file_uri              = ( strpos( $string, '/' ) === 0 ? untrailingslashit( $this->base_uri ) : $this->base_uri ) . $string;
 		$rel_path_count_in_uri = substr_count( $file_uri, $rel_file_path );
-		$rel_file_path_in_uri = strpos( $file_uri, $rel_file_path );
-		$normalized_path =
+		$rel_file_path_in_uri  = strpos( $file_uri, $rel_file_path );
+		$normalized_path       =
 			$rel_path_count_in_uri > 1 ?
 			substr_replace( $file_uri, '', $rel_file_path_in_uri, strlen( $rel_file_path ) ) :
 			$file_uri;
-		$normalized_path = apply_filters( 'queulat_webpack_asset_loader_file_uri', $normalized_path, $string, $this->base_uri );
+		$normalized_path       = apply_filters( 'queulat_webpack_asset_loader_file_uri', $normalized_path, $string, $this->base_uri );
 		return $normalized_path;
 	}
 
@@ -402,7 +402,7 @@ class Webpack_Asset_Loader {
 		}
 
 		// Use the file modification time as a fallback.
-		if ( isset( $this->manifest->{$handle} ) ){
+		if ( isset( $this->manifest->{$handle} ) ) {
 			$resource_path = trailingslashit( $this->base_directory ) . pathinfo( $this->manifest->{$handle}, PATHINFO_BASENAME );
 			return filemtime( $resource_path );
 		}

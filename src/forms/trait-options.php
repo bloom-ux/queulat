@@ -9,7 +9,7 @@ trait Options_Trait {
 	 * @inheritDoc
 	 * @suppress PhanTypeMismatchReturn
 	 */
-	public function set_options( $options ) : Node_Interface {
+	public function set_options( $options ): Node_Interface {
 		$this->options = $options;
 		return $this;
 	}

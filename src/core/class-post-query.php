@@ -86,14 +86,14 @@ abstract class Post_Query implements \Iterator, \Countable {
 	 *
 	 * @return string A post type slug
 	 */
-	abstract protected function get_post_type() : string;
+	abstract protected function get_post_type(): string;
 
 	/**
 	 * Get the name for the WP_Post decorator
 	 *
 	 * @return string The FQN of a WP_Post decorator. It could be empty
 	 */
-	abstract protected function get_decorator() : string;
+	abstract protected function get_decorator(): string;
 
 	/**
 	 * Parse query params and execute WP_Query
@@ -102,7 +102,7 @@ abstract class Post_Query implements \Iterator, \Countable {
 		$default_args = array(
 			'post_type' => $this->get_post_type(),
 		);
-		if ( is_callable( [ $this, 'get_default_args' ] ) ) {
+		if ( is_callable( array( $this, 'get_default_args' ) ) ) {
 			$default_args = array_merge( $default_args, $this->get_default_args() );
 		}
 		$query_args  = wp_parse_args( $this->query_args, $default_args );
@@ -114,8 +114,8 @@ abstract class Post_Query implements \Iterator, \Countable {
 	 *
 	 * @return array
 	 */
-	public function get_default_args() : array {
-		return [];
+	public function get_default_args(): array {
+		return array();
 	}
 
 	/**
@@ -138,7 +138,7 @@ abstract class Post_Query implements \Iterator, \Countable {
 	 *
 	 * @return \WP_Query The current WP_Query
 	 */
-	public function get_query() : WP_Query {
+	public function get_query(): WP_Query {
 		if ( ! $this->query ) {
 			$this->do_query();
 		}
@@ -150,7 +150,7 @@ abstract class Post_Query implements \Iterator, \Countable {
 	 *
 	 * @return array Array with the ID for each post in current query
 	 */
-	public function get_found_posts_ids() : array {
+	public function get_found_posts_ids(): array {
 		if ( ! isset( $this->query ) ) {
 			$this->do_query();
 			$this->pre_loop();
@@ -163,7 +163,7 @@ abstract class Post_Query implements \Iterator, \Countable {
 	 *
 	 * @return int The number of posts on the current query
 	 */
-	public function count() : int {
+	public function count(): int {
 		if ( ! isset( $this->query ) ) {
 			$this->do_query();
 			$this->pre_loop();
@@ -182,8 +182,7 @@ abstract class Post_Query implements \Iterator, \Countable {
 	/**
 	 * Iterator methods
 	 */
-
-	public function current() : Post_Object {
+	public function current(): Post_Object {
 		if ( isset( $this->the_post ) ) {
 			return $this->the_post;
 		}
@@ -195,7 +194,7 @@ abstract class Post_Query implements \Iterator, \Countable {
 		$this->the_post = new $this->decorator( $post );
 		return $this->the_post;
 	}
-	public function key() : int {
+	public function key(): int {
 		return $this->query->current_post;
 	}
 
@@ -232,7 +231,7 @@ abstract class Post_Query implements \Iterator, \Countable {
 			$this->query->rewind_posts();
 		}
 	}
-	public function valid() : bool {
+	public function valid(): bool {
 		if ( $this->query->have_posts() ) {
 			return true;
 		} else {

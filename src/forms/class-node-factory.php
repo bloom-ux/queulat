@@ -44,7 +44,7 @@ class Node_Factory {
 	 *
 	 * @var array
 	 */
-	private static $registered_arguments = [];
+	private static $registered_arguments = array();
 
 	/**
 	 * Allow using the factory as an object. Forward method calls to static methods
@@ -56,7 +56,7 @@ class Node_Factory {
 	 */
 	public function __call( $name, $arguments ) {
 		if ( method_exists( __CLASS__, $name ) ) {
-			call_user_func_array( [ __CLASS__, $name ], $arguments );
+			call_user_func_array( array( __CLASS__, $name ), $arguments );
 		} else {
 			throw new \BadFunctionCallException( sprintf( _x( 'Call to undefined method %s', 'node factory exception', 'queulat' ), __CLASS__ . "::{$name}()" ) );
 		}
@@ -69,7 +69,7 @@ class Node_Factory {
 	 * @param array  $args          An specification of arguments used to build the object
 	 * @return Node_Interface      An instantiated object
 	 */
-	public static function make( string $element_name, array $args = [] ) : Node_Interface {
+	public static function make( string $element_name, array $args = array() ): Node_Interface {
 		if ( ! class_exists( $element_name ) ) {
 			throw new \LogicException( sprintf( _x( "The '%s' element doesn't exists", 'node factory exception', 'queulat' ), $element_name ) );
 		}
@@ -115,20 +115,20 @@ class Node_Factory {
 	 * @param array          $args         Builiding specs
 	 * @return Node_Interface     The built object
 	 */
-	public static function configure( Node_Interface $obj, array $args = [] ) : Node_Interface {
+	public static function configure( Node_Interface $obj, array $args = array() ): Node_Interface {
 		foreach ( static::get_registered_arguments() as $argument => $handler ) {
 			if ( ! isset( $args[ $argument ] ) ) {
 				continue;
 			}
 			// check if the object implements the required method
-			if ( is_callable( [ $obj, $handler->method ] ) ) {
+			if ( is_callable( array( $obj, $handler->method ) ) ) {
 				if ( is_array( $args[ $argument ] ) ) {
 					// check if the arguments should be given as distinct parametedrs to the method,
 					// use their keys as arguments or just use the value
 					$call_type = $handler->call_type ?? static::CALL_TYPE_DEFAULT;
 					switch ( $call_type ) {
 						case static::CALL_TYPE_ARRAY:
-							call_user_func_array( [ $obj, $handler->method ], $args[ $argument ] );
+							call_user_func_array( array( $obj, $handler->method ), $args[ $argument ] );
 							break;
 						case static::CALL_TYPE_KEY_VALUE:
 							foreach ( $args[ $argument ] as $key => $val ) {
@@ -136,7 +136,7 @@ class Node_Factory {
 							}
 							break;
 						case static::CALL_TYPE_VALUE_ITEMS:
-							array_walk( $args[ $argument ], [ $obj, $handler->method ] );
+							array_walk( $args[ $argument ], array( $obj, $handler->method ) );
 							break;
 						case static::CALL_TYPE_VALUE:
 							$obj->{ $handler->method }( $args[ $argument ] );

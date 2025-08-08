@@ -16,20 +16,23 @@ abstract class Component implements Component_Interface, Form_Node_Interface, Pr
 
 	protected $text_content = '';
 
-	use Form_Control_Trait, Properties_Trait, Childless_Node_Trait, Attributes_Trait;
+	use Form_Control_Trait;
+	use Properties_Trait;
+	use Childless_Node_Trait;
+	use Attributes_Trait;
 
 	/**
 	 * @inheritDoc
 	 * @internal Components are not supposed to have global attributes
 	 */
-	public static function get_global_attributes() : array {
-		return [];
+	public static function get_global_attributes(): array {
+		return array();
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function set_text_content( string $text ) : Node_Interface {
+	public function set_text_content( string $text ): Node_Interface {
 		$this->text_content = $text;
 		return $this;
 	}
@@ -37,7 +40,7 @@ abstract class Component implements Component_Interface, Form_Node_Interface, Pr
 	/**
 	 * @inheritDoc
 	 */
-	public function get_text_content() : string {
+	public function get_text_content(): string {
 		return $this->text_content;
 	}
 }

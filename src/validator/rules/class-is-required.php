@@ -18,7 +18,7 @@ class Is_Required implements Validator_Interface {
 	 * @param mixed $value Value to validate.
 	 * @return bool True if valid, false otherwise.
 	 */
-	public function is_valid( $value ) : bool {
+	public function is_valid( $value ): bool {
 		return ! empty( $value );
 	}
 
@@ -28,7 +28,7 @@ class Is_Required implements Validator_Interface {
 	 * @since 0.1.0
 	 * @return string Error message.
 	 */
-	public function get_message() : string {
+	public function get_message(): string {
 		return __( 'Please complete this field', 'queulat' );
 	}
 }

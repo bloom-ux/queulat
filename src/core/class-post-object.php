@@ -28,7 +28,7 @@ abstract class Post_Object {
 	 *
 	 * @var array
 	 */
-	private $known_properties = [];
+	private $known_properties = array();
 
 	/**
 	 * Constructor.
@@ -46,7 +46,7 @@ abstract class Post_Object {
 	 * @param  int|\WP_Post|null $post A post or ID to build a new Post_Object
 	 * @return Post_Object                  Instantiated Post_Object
 	 */
-	public static function get_instance( $post = null ) : Post_Object {
+	public static function get_instance( $post = null ): Post_Object {
 		$post = get_post( $post );
 		return new static( $post );
 	}
@@ -102,7 +102,7 @@ abstract class Post_Object {
 	 * @param string $key The name of the checked property
 	 * @return bool
 	 */
-	public function __isset( string $key ) : bool {
+	public function __isset( string $key ): bool {
 		return metadata_exists( 'post', $this->post->ID, $key );
 	}
 
@@ -111,7 +111,7 @@ abstract class Post_Object {
 	 *
 	 * @return array PostObject debug info
 	 */
-	public function __debugInfo() : array {
+	public function __debugInfo(): array {
 		$debug_object = array();
 		foreach ( get_object_vars( $this ) as $key => $val ) {
 			$debug_object[ $key ] = $val;
@@ -127,7 +127,7 @@ abstract class Post_Object {
 	 *
 	 * @return \WP_Post The post object that we're working with
 	 */
-	public function get_post() : \WP_Post {
+	public function get_post(): \WP_Post {
 		return $this->post;
 	}
 
@@ -137,7 +137,7 @@ abstract class Post_Object {
 	 * @param string $key The meta_key to get
 	 * @return array The meta value
 	 */
-	public function get_multiple( string $key ) : array {
+	public function get_multiple( string $key ): array {
 		return get_post_meta( $this->post->ID, $key, false );
 	}
 
@@ -147,7 +147,7 @@ abstract class Post_Object {
 	 * @param  string $key The meta_key value we're trying to get
 	 * @return string The meta value
 	 */
-	public function get_single( string $key ) : string {
+	public function get_single( string $key ): string {
 		return get_post_meta( $this->post->ID, $key, true );
 	}
 
@@ -158,7 +158,7 @@ abstract class Post_Object {
 	 * @param  array  $attr Attributes used on the HTML image element
 	 * @return string Post thumbnail HTML
 	 */
-	public function get_thumbnail( string $size = 'post-thumbnail', array $attr = array() ) : string {
+	public function get_thumbnail( string $size = 'post-thumbnail', array $attr = array() ): string {
 		return get_the_post_thumbnail( $this->post->ID, $size, $attr );
 	}
 }

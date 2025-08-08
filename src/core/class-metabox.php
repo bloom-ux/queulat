@@ -66,7 +66,7 @@ abstract class Metabox {
 	 *
 	 * @var array
 	 */
-	protected $args = [];
+	protected $args = array();
 
 	/**
 	 * Create a new metabox
@@ -119,7 +119,7 @@ abstract class Metabox {
 	 *
 	 * @return array An array of form fields
 	 */
-	abstract public function get_fields() : array;
+	abstract public function get_fields(): array;
 
 	/**
 	 * Sanitize metabox data
@@ -127,7 +127,7 @@ abstract class Metabox {
 	 * @param  array $data  Submitted form data
 	 * @return array        Sanitized data
 	 */
-	abstract public function sanitize_data( array $data ) : array;
+	abstract public function sanitize_data( array $data ): array;
 
 	/**
 	 * Set-up common metabox actions
@@ -145,7 +145,7 @@ abstract class Metabox {
 	 * Do the actual metabox registration for the given post-type
 	 */
 	final public function add_metabox() {
-		$do_add = apply_filters( 'add_meta_box_'. $this->get_id(), true, $this );
+		$do_add = apply_filters( 'add_meta_box_' . $this->get_id(), true, $this );
 		if ( ! $do_add ) {
 			return false;
 		}
@@ -294,14 +294,12 @@ abstract class Metabox {
 		foreach ( $this->get_fields() as $element ) {
 			if ( $element instanceof Fieldset ) {
 				foreach ( $element->get_children() as $child ) {
-					if ( is_callable( [ $child, 'get_name' ] ) ) {
+					if ( is_callable( array( $child, 'get_name' ) ) ) {
 						$this->update_post_meta( $post_id, $child->get_name(), $data );
 					}
 				}
-			} else {
-				if ( is_callable( [ $element, 'get_name' ] ) ) {
+			} elseif ( is_callable( array( $element, 'get_name' ) ) ) {
 					$this->update_post_meta( $post_id, $element->get_name(), $data );
-				}
 			}
 		}
 
@@ -408,7 +406,7 @@ abstract class Metabox {
 	 * @throws \Exception If user doesn't have permissions on this entry
 	 * @return bool True if users passes checks
 	 */
-	private function check_permissions( int $postid ) : bool {
+	private function check_permissions( int $postid ): bool {
 		// nonce it's not present when not saving
 		if ( ! isset( $_POST[ $this->id . '_nonce' ] ) ) {
 			return false;

@@ -8,8 +8,8 @@ use Queulat\Forms\HTML_Form_Element;
 use Queulat\Forms\Node_List_Interface;
 
 class Button extends HTML_Form_Element {
-	public static function get_element_attributes() : array {
-		return [
+	public static function get_element_attributes(): array {
+		return array(
 			'autofocus',
 			'autocomplete',
 			'disabled',
@@ -22,18 +22,18 @@ class Button extends HTML_Form_Element {
 			'name',
 			'type',
 			'value',
-		];
+		);
 	}
 	public function __construct( array $properties = array(), $text_content = '' ) {
 		parent::__construct( $properties, $text_content );
 	}
-	public function get_tag_name() : string {
+	public function get_tag_name(): string {
 		return 'button';
 	}
-	public function get_children() : Node_List_Interface {
+	public function get_children(): Node_List_Interface {
 		return new Node_List();
 	}
-	public function set_value( $val ) : Node_Interface {
+	public function set_value( $val ): Node_Interface {
 		$this->set_attribute( 'value', $val );
 		return $this;
 	}

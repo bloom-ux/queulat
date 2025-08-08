@@ -5,14 +5,14 @@ namespace Queulat\Generator\Builder;
 use Queulat\Helpers\Arrays;
 
 class Custom_Post_Type {
-	private $params = [];
+	private $params = array();
 
 	/**
 	 * List of reserved keywords that can't be used as CPT slug
 	 *
 	 * @var array
 	 */
-	public static $reserved_keywords = [
+	public static $reserved_keywords = array(
 		'action',
 		'attachment',
 		'author',
@@ -24,15 +24,15 @@ class Custom_Post_Type {
 		'post',
 		'revision',
 		'theme',
-	];
+	);
 
-	public function __construct( array $params = [] ) {
+	public function __construct( array $params = array() ) {
 		if ( $params ) {
 			$this->params = $this->sanitize_input( $params );
 		}
 	}
-	public static function get_supports() : array {
-		return [
+	public static function get_supports(): array {
+		return array(
 			'title'           => __( 'Title', 'queulat' ),
 			'editor'          => __( 'Editor (content)', 'queulat' ),
 			'author'          => __( 'Author', 'queulat' ),
@@ -44,11 +44,11 @@ class Custom_Post_Type {
 			'revisions'       => __( 'Revisions', 'queulat' ),
 			'page-attributes' => __( 'Page attributes: menu order, parent (if hierarchical is true)', 'queulat' ),
 			'post-formats'    => __( 'Post formats', 'queulat' ),
-		];
+		);
 	}
-	public function sanitize_input( array $input ) : array {
+	public function sanitize_input( array $input ): array {
 		$flat      = Arrays::flatten( $input );
-		$sanitized = [];
+		$sanitized = array();
 		foreach ( $flat as $key => $val ) {
 			switch ( $key ) {
 				case 'slug':

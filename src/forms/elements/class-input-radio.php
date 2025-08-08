@@ -7,7 +7,8 @@ use Queulat\Helpers\Arrays;
 
 class Input_Radio extends Input implements Forms\Option_Node_Interface {
 	use Forms\Options_Trait;
-	public function __toString() : string {
+
+	public function __toString(): string {
 		$options = $this->get_options();
 		if ( ! Arrays::is_associative( $options ) ) {
 			$options = array_combine( (array) $options, (array) $options );

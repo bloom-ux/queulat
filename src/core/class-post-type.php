@@ -26,7 +26,7 @@ abstract class Post_Type {
 	 *
 	 * @return string Post type key
 	 */
-	abstract public function get_post_type() : string;
+	abstract public function get_post_type(): string;
 
 	/**
 	 * Get post type arguments.
@@ -34,7 +34,7 @@ abstract class Post_Type {
 	 * @see register_post_type
 	 * @return array
 	 */
-	abstract public function get_post_type_args() : array;
+	abstract public function get_post_type_args(): array;
 
 	/**
 	 * Get the registered post type object
@@ -42,7 +42,7 @@ abstract class Post_Type {
 	 * @see get_post_type_object
 	 * @return null|WP_Post_Type
 	 */
-	public function get_post_type_object() : ?WP_Post_Type {
+	public function get_post_type_object(): ?WP_Post_Type {
 		return get_post_type_object( $this->get_post_type() );
 	}
 
@@ -104,6 +104,7 @@ abstract class Post_Type {
 
 	/**
 	 * Activate plugin for the current blog
+	 *
 	 * @return WP_Error|true True if successful; WP_Error otherwhise
 	 */
 	private static function activate_for_blog() {
