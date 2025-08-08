@@ -40,6 +40,12 @@ class Validator {
 		return $this->is_valid;
 	}
 
+	/**
+	 * Execute validation for all rules and data.
+	 *
+	 * @since 0.1.0
+	 * @return void
+	 */
 	protected function validate_loop() {
 		if ( $this->validated ) {
 			return;
@@ -58,6 +64,15 @@ class Validator {
 		$this->validated = true;
 	}
 
+	/**
+	 * Validate a single piece of data against a validator.
+	 *
+	 * @since 0.1.0
+	 * @param string                $name      Field name.
+	 * @param mixed                 $value     Field value.
+	 * @param Validator_Interface $validator Validator instance.
+	 * @return void
+	 */
 	protected function validate_data( $name, $value, Validator_Interface $validator ) {
 		if ( ! $validator->is_valid( $value ) ) {
 			$this->errors[ $name ] = $validator->get_message();

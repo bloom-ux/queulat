@@ -2,6 +2,15 @@
 
 namespace Queulat;
 
+/**
+ * Singleton pattern trait.
+ *
+ * Provides singleton functionality to classes that use this trait.
+ * Ensures only one instance of the class is created.
+ *
+ * @package Queulat
+ * @since   0.1.0
+ */
 trait Singleton {
 	protected static $instance = null;
 
@@ -16,6 +25,14 @@ trait Singleton {
 		}
 		return static::$instance;
 	}
+	/**
+	 * Constructor.
+	 *
+	 * Protected constructor to prevent direct instantiation.
+	 * Use get_instance() method instead.
+	 *
+	 * @since 0.1.0
+	 */
 	public function __construct() {
 	}
 }

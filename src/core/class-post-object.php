@@ -30,6 +30,12 @@ abstract class Post_Object {
 	 */
 	private $known_properties = [];
 
+	/**
+	 * Constructor.
+	 *
+	 * @since 0.1.0
+	 * @param int|\WP_Post|null $post Post ID, post object, or null for current post.
+	 */
 	public function __construct( $post = null ) {
 		$this->post = get_post( $post );
 	}

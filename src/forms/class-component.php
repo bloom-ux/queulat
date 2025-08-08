@@ -2,6 +2,16 @@
 
 namespace Queulat\Forms;
 
+/**
+ * Abstract base class for form components.
+ *
+ * Provides common functionality for form components that implement multiple interfaces.
+ * Components are UI elements that don't support global HTML attributes but can hold
+ * text content and properties.
+ *
+ * @package Queulat
+ * @since   0.1.0
+ */
 abstract class Component implements Component_Interface, Form_Node_Interface, Properties_Interface {
 
 	protected $text_content = '';

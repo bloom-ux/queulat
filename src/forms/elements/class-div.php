@@ -4,6 +4,15 @@ namespace Queulat\Forms\Element;
 
 use Queulat\Forms\HTML_Element;
 
+/**
+ * Div HTML element class.
+ *
+ * Represents an HTML div element that can contain child elements and text content.
+ * Extends the base HTML element functionality.
+ *
+ * @package Queulat
+ * @since   0.1.0
+ */
 class Div extends HTML_Element {
 	/**
 	 * @inheritDoc

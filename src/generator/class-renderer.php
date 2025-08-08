@@ -2,6 +2,15 @@
 
 namespace Queulat\Generator;
 
+/**
+ * Renderer utility class.
+ *
+ * Provides static methods for rendering PHP code arrays and formatting output.
+ * Used primarily for generating PHP code from data structures.
+ *
+ * @package Queulat
+ * @since   0.1.0
+ */
 class Renderer {
 
 	/**

@@ -2,7 +2,23 @@
 
 namespace Queulat\Helpers;
 
+/**
+ * Array utility class.
+ *
+ * Provides static methods for common array operations including
+ * associative array detection, flattening, and recursive filtering.
+ *
+ * @package Queulat
+ * @since   0.1.0
+ */
 class Arrays {
+	/**
+	 * Private constructor to prevent instantiation.
+	 *
+	 * This class should only be used statically.
+	 *
+	 * @since 0.1.0
+	 */
 	private function __construct() {
 	}
 

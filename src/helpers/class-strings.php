@@ -4,7 +4,23 @@ namespace Queulat\Helpers;
 
 use Doctrine\Inflector\InflectorFactory;
 
+/**
+ * String utility class.
+ *
+ * Provides static methods for common string operations including case conversion,
+ * word limiting, and pluralization using the Doctrine Inflector.
+ *
+ * @package Queulat
+ * @since   0.1.0
+ */
 class Strings {
+	/**
+	 * Private constructor to prevent instantiation.
+	 *
+	 * This class should only be used statically.
+	 *
+	 * @since 0.1.0
+	 */
 	private function __construct() {
 	}
 
