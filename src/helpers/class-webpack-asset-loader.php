@@ -98,7 +98,8 @@ class Webpack_Asset_Loader {
 	 * Build a new Webpack Asset Loader instance.
 	 *
 	 * @param string $prefix A unique prefix for the files managed by this instance, eg. "my-theme".
-	 * @param string $base_directory The full-path to the base directory where built files are located, (assets/dist by default).
+	 * @param string $base_directory The full-path to the base directory where built files are located (where the manifest.json file is).
+	 * @param string $base_uri URI to the directory where built files are located.
 	 */
 	public function __construct(
 		string $prefix,
@@ -272,19 +273,19 @@ class Webpack_Asset_Loader {
 	/**
 	 * Get the URI for a file on the theme directory
 	 *
-	 * @param string $string Path to the file.
+	 * @param string $input_file_path Path to the file.
 	 * @return string Normalized URL to the file.
 	 */
-	private function get_file_uri( string $string ): string {
-		$rel_file_path         = pathinfo( wp_parse_url( $string, PHP_URL_PATH ), PATHINFO_DIRNAME );
-		$file_uri              = ( strpos( $string, '/' ) === 0 ? untrailingslashit( $this->base_uri ) : $this->base_uri ) . $string;
+	private function get_file_uri( string $input_file_path ): string {
+		$rel_file_path         = pathinfo( wp_parse_url( $input_file_path, PHP_URL_PATH ), PATHINFO_DIRNAME );
+		$file_uri              = ( strpos( $input_file_path, '/' ) === 0 ? untrailingslashit( $this->base_uri ) : $this->base_uri ) . $input_file_path;
 		$rel_path_count_in_uri = substr_count( $file_uri, $rel_file_path );
 		$rel_file_path_in_uri  = strpos( $file_uri, $rel_file_path );
 		$normalized_path       =
 			$rel_path_count_in_uri > 1 ?
 			substr_replace( $file_uri, '', $rel_file_path_in_uri, strlen( $rel_file_path ) ) :
 			$file_uri;
-		$normalized_path       = apply_filters( 'queulat_webpack_asset_loader_file_uri', $normalized_path, $string, $this->base_uri );
+		$normalized_path       = apply_filters( 'queulat_webpack_asset_loader_file_uri', $normalized_path, $input_file_path, $this->base_uri );
 		return $normalized_path;
 	}
 
