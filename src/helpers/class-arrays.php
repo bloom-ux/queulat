@@ -60,10 +60,9 @@ class Arrays {
 		$return = array();
 		foreach ( $arr as $key => $value ) {
 			if ( stripos( $key, $glue ) !== false ) {
-				$keys  = explode( $glue, $key );
-				$temp  =& $return;
-				$count = count( $keys );
-				while ( $count > 1 ) {
+				$keys = explode( $glue, $key );
+				$temp =& $return;
+				while ( count( $keys ) > 1 ) { //phpcs:ignore
 					$key = array_shift( $keys );
 					$key = is_numeric( $key ) ? (int) $key : $key;
 					if ( ! isset( $temp[ $key ] ) || ! is_array( $temp[ $key ] ) ) {
