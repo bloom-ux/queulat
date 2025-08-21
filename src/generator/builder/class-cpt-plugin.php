@@ -27,11 +27,11 @@ class Custom_Post_Type_Plugin {
 	/**
 	 * Build a new Custom Post Type plugin builder
 	 *
-	 * @param string $slug The post type slug
-	 * @param array  $args  Post type arguments
-	 * @see https://codex.wordpress.org/register_post_type#Arguments
+	 * @param string $slug The post type slug.
+	 * @param array  $args  Post type arguments.
+	 * @see https://developer.wordpress.org/reference/functions/register_post_type/#Arguments
 	 */
-	public function __construct( string $slug, array $args ) {
+	public function __construct( string $slug, array $args = array() ) {
 		$this->raw_slug     = $slug;
 		$sanitized_slug     = sanitize_key( $slug );
 		$this->wp_post_type = new WP_Post_Type( $sanitized_slug, $args );
@@ -97,9 +97,9 @@ class Custom_Post_Type_Plugin {
 	public function build() {
 		$template_vars = $this->get_template_vars();
 
-		// replace "stub" in stub file names with the file name
+		// replace "stub" in stub file names with the file name.
 		$stub   = $template_vars['file_name'];
-		$prefix = apply_filters( 'quelat_generate_builder_ctp_plugin', 'queulat-' );
+		$prefix = apply_filters( 'queulat_generate_builder_ctp_plugin', 'queulat-' );
 
 		$loader       = new FilesystemLoader( __DIR__ . '/../stubs' );
 		$twig         = new Environment( $loader, array() );
