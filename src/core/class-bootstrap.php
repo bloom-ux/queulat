@@ -13,6 +13,7 @@ namespace Queulat;
 
 use Queulat\Forms\Node_Factory;
 use Queulat\Forms\Node_Factory_Argument_Handler;
+use Queulat\Generator\CLI\CPT_Plugin_Command;
 
 /**
  * Hook Queulat into WordPress
@@ -32,6 +33,7 @@ class Bootstrap {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ), 9999 );
 		$this->register_default_node_factory_args();
 		load_muplugin_textdomain( 'queulat', str_replace( WPMU_PLUGIN_DIR, '', __DIR__ ) . '/../../languages' );
+		$this->init_cli_commands();
 	}
 
 	/**
@@ -41,6 +43,18 @@ class Bootstrap {
 	 */
 	public function init_generator_admin() {
 		( new Generator\Admin\CPT_Plugin() )->init();
+	}
+
+	/**
+	 * Initialize wp-cli commands
+	 *
+	 * @return void
+	 */
+	public function init_cli_commands() {
+		if ( ! is_callable( array( '\WP_CLI', 'add_command' ) ) ) {
+			return;
+		}
+		CPT_Plugin_Command::init();
 	}
 
 	/**
