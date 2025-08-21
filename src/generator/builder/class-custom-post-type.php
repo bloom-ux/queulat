@@ -20,16 +20,24 @@ class Custom_Post_Type {
 	 * @var array
 	 */
 	public static $reserved_keywords = array(
-		'action',
+		// core post types.
+		'post',
+		'page',
 		'attachment',
-		'author',
+		'revision',
+		'nav_menu_item',
 		'custom_css',
 		'customize_changeset',
-		'nav_menu_item',
+		'oembed_cache',
+		'user_request',
+		'wp_block',
+		'wp_global_styles',
+		'wp_template',
+		'wp_template_part',
+		// other reserved keywords.
+		'action',
+		'author',
 		'order',
-		'page',
-		'post',
-		'revision',
 		'theme',
 	);
 
