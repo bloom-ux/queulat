@@ -25,15 +25,14 @@ class Bootstrap {
 	 * Sets up action hooks for admin initialization, asset enqueuing,
 	 * and registers default node factory arguments.
 	 *
-	 * @since 0.1.0
 	 * @return void
 	 */
 	public function init() {
 		add_action( 'muplugins_loaded', array( $this, 'init_generator_admin' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ), 9999 );
 		$this->register_default_node_factory_args();
-		load_muplugin_textdomain( 'queulat', str_replace( WPMU_PLUGIN_DIR, '', __DIR__ ) . '/../../languages' );
 		$this->init_cli_commands();
+		add_action( 'init', array( $this, 'load_translations' ) );
 	}
 
 	/**
@@ -58,6 +57,15 @@ class Bootstrap {
 	}
 
 	/**
+	 * Load Queulat translations
+	 *
+	 * @return void
+	 */
+	public function load_translations() {
+		load_muplugin_textdomain( 'queulat', str_replace( WPMU_PLUGIN_DIR, '', __DIR__ ) . '/../../languages' );
+	}
+
+	/**
 	 * Enqueue admin assets for the plugin.
 	 *
 	 * Loads CSS assets from the manifest file and enqueues them for admin pages.
@@ -71,6 +79,7 @@ class Bootstrap {
 		$asset_versions = json_decode( file_get_contents( $versions_path ) );
 		wp_enqueue_style( 'queulat-forms', plugins_url( '..' . $asset_versions->{'dist/admin.css'}, __DIR__ ), array(), null, 'all' );
 	}
+
 	/**
 	 * Register default argument handlers for the node factory.
 	 *
