@@ -62,7 +62,7 @@ class Custom_Post_Type_Plugin {
 			}
 			$properties .= Renderer::render_array_member( $key, $val, $longest_key, in_array( $key, $localize ), "cpt_{$this->wp_post_type->name}" );
 		}
-		return rtrim( $properties, "\n," );
+		return $properties;
 	}
 
 	/**
@@ -129,8 +129,13 @@ class Custom_Post_Type_Plugin {
 		$plugin_dir = "{$prefix}{$template_vars['file_name']}-cpt-plugin";
 
 		$wp_filesystem->mkdir( WP_PLUGIN_DIR . "/{$plugin_dir}" );
+		$wp_filesystem->mkdir( WP_PLUGIN_DIR . "/{$plugin_dir}/src" );
 		foreach ( $output_files as $filename => $contents ) {
-			$wp_filesystem->put_contents( WP_PLUGIN_DIR . "/{$plugin_dir}/{$filename}", $contents );
+			if ( str_starts_with( $filename, 'class-' ) ) {
+				$wp_filesystem->put_contents( WP_PLUGIN_DIR . "/{$plugin_dir}/src/{$filename}", $contents );
+			} else {
+				$wp_filesystem->put_contents( WP_PLUGIN_DIR . "/{$plugin_dir}/{$filename}", $contents );
+			}
 		}
 
 		return true;

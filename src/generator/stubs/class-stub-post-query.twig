@@ -1,4 +1,9 @@
 <?php
+/**
+ * {{ label }} queries creator
+ *
+ * @package {{ class_name }}_CPT_Plugin
+ */
 
 use Queulat\Post_Query;
 
@@ -8,13 +13,31 @@ use Queulat\Post_Query;
  * @method {{ class_name }}_Post_Object current
  */
 class {{ class_name }}_Post_Query extends Post_Query {
+
+	/**
+	 * Get post type slug
+	 *
+	 * @return string {{ post_type }}
+	 */
 	public function get_post_type() : string {
 		return '{{ post_type }}';
 	}
+
+	/**
+	 * Get the name of the class that decorates query objects
+	 *
+	 * @return string {{ class_name }}_Post_Object::class
+	 */
 	public function get_decorator() : string {
 		return {{ class_name }}_Post_Object::class;
 	}
+
+	/**
+	 * Get default arguments for queries made with this class
+	 *
+	 * @return array Default query arguments
+	 */
 	public function get_default_args() : array {
-		return [];
+		return array();
 	}
 }
