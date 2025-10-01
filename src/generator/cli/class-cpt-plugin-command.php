@@ -11,6 +11,7 @@ use Queulat\CLI_Argument;
 use Queulat\CLI_Argument_Types;
 use Queulat\CLI_Command;
 use Queulat\Generator\Builder\Custom_Post_Type_Plugin;
+use Queulat\Helpers\Strings;
 
 use function WP_CLI\Utils\get_flag_value;
 
@@ -57,13 +58,38 @@ class CPT_Plugin_Command extends CLI_Command {
 					}
 				}
 			}
-			$slug = $cpt_args['post-type'];
+			$cpt_args = $this->sanitize_cpt_args( $cpt_args );
+			$slug     = $cpt_args['post-type'];
 			unset( $cpt_args['post-type'] );
-			$cpt_args['rewrite']['slug'] = str_replace( '_', '-', $slug );
+			$cpt_args['rewrite']['slug'] = str_replace( '_', '-', sanitize_key( $slug ) );
+			$cpt_args['capability_type'] = array( sanitize_key( $slug ), sanitize_key( Strings::plural( $slug ) ) );
+			$cpt_args['map_meta_cap']    = true;
 			$new_plugin                  = new Custom_Post_Type_Plugin( $slug, $cpt_args );
 			$new_plugin->build();
 			exit( 0 );
 		};
+	}
+
+	/**
+	 * Sanitize CLI arguments
+	 *
+	 * @param array $cpt_args CLI arguments.
+	 * @return array Sanitized args
+	 */
+	private function sanitize_cpt_args( array $cpt_args ): array {
+		$sanitized = queulat_sanitizer(
+			$cpt_args,
+			array(
+				'post-type'    => array( 'sanitize_key' ),
+				'singular'     => array( 'sanitize_text_field' ),
+				'plural'       => array( 'sanitize_text_field' ),
+				'description'  => array( 'sanitize_textarea_field' ),
+				'public'       => array( 'boolval' ),
+				'hierarchical' => array( 'boolval' ),
+				'menu_icon'    => array( 'sanitize_text_field' ),
+			)
+		);
+		return $sanitized;
 	}
 
 	/**

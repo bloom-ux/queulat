@@ -11,6 +11,7 @@ use WP_Post_Type;
 use Twig\Environment;
 use Queulat\Helpers\Strings;
 use Queulat\Generator\Renderer;
+use stdClass;
 use Twig\Loader\FilesystemLoader;
 
 /**
@@ -43,6 +44,36 @@ class Custom_Post_Type_Plugin {
 		$this->raw_slug     = $slug;
 		$sanitized_slug     = sanitize_key( $slug );
 		$this->wp_post_type = new WP_Post_Type( $sanitized_slug, $args );
+		if ( empty( $args['labels'] ) ) {
+			$this->wp_post_type->labels = $this->generate_labels( $args );
+		}
+		if ( empty( $args['label'] ) && ! empty( $args['plural'] ) ) {
+			$this->wp_post_type->label = $args['plural'];
+		}
+	}
+
+	/**
+	 * Generate custom labels for the post type
+	 *
+	 * @param array $args Post type parameters.
+	 * @return stdClass Custom labels
+	 *
+	 * phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralText,WordPress.WP.I18n.MissingArgDomain
+	 */
+	private function generate_labels( array $args = array() ): stdClass {
+		$default_labels   = get_post_type_labels( $this->wp_post_type );
+		$default_singular = __( $this->wp_post_type->labels->singular_name );
+		$default_plural   = __( $this->wp_post_type->labels->name );
+		$custom_singular  = sanitize_text_field( $args['singular'] );
+		$custom_plural    = sanitize_text_field( $args['plural'] );
+		$custom_labels    = (object) array();
+		foreach ( $default_labels as $key => $label ) {
+			$label               = __( $label );
+			$new_label           = stripos( (string) $label, $default_plural ) === false ? str_ireplace( $default_singular, $custom_singular, (string) $label ) : str_ireplace( $default_plural, $custom_plural, (string) $label );
+			$custom_labels->$key = $new_label;
+		}
+		$custom_labels->name_admin_bar = $custom_singular;
+		return $custom_labels;
 	}
 
 	/**
@@ -55,7 +86,7 @@ class Custom_Post_Type_Plugin {
 		$longest_key                    = Renderer::get_longest_key_length( array_keys( $object_vars ) );
 		$object_vars['capability_type'] = array(
 			$this->wp_post_type->name,
-			Strings::plural( $this->wp_post_type->name ),
+			sanitize_key( Strings::plural( $this->wp_post_type->name ) ),
 		);
 		$properties                     = '';
 		$localize                       = array(
