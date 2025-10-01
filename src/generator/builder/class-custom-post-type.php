@@ -1,9 +1,17 @@
 <?php
+/**
+ * Create a custom post type for the plugin creator
+ *
+ * @package Queulat
+ */
 
 namespace Queulat\Generator\Builder;
 
 use Queulat\Helpers\Arrays;
 
+/**
+ * Create a custom post type for use on the plugin creator
+ */
 class Custom_Post_Type {
 
 

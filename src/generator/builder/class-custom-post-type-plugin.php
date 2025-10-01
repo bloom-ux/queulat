@@ -1,4 +1,9 @@
 <?php
+/**
+ * Generate a Custom Post Type plugin
+ *
+ * @package Queulat
+ */
 
 namespace Queulat\Generator\Builder;
 
@@ -8,6 +13,9 @@ use Queulat\Helpers\Strings;
 use Queulat\Generator\Renderer;
 use Twig\Loader\FilesystemLoader;
 
+/**
+ * Generate a Custom Post Type plugin
+ */
 class Custom_Post_Type_Plugin {
 
 	/**
@@ -56,11 +64,11 @@ class Custom_Post_Type_Plugin {
 			'description',
 		);
 		foreach ( $object_vars as $key => $val ) {
-			// internal properties
-			if ( strpos( $key, '_' ) === 0 || $key == 'name' || $key == 'cap' ) {
+			// internal properties.
+			if ( strpos( $key, '_' ) === 0 || 'name' === $key || 'cap' === $key ) {
 				continue;
 			}
-			$properties .= Renderer::render_array_member( $key, $val, $longest_key, in_array( $key, $localize ), "cpt_{$this->wp_post_type->name}" );
+			$properties .= Renderer::render_array_member( $key, $val, $longest_key, in_array( $key, $localize, true ), "cpt_{$this->wp_post_type->name}" );
 		}
 		return $properties;
 	}
@@ -94,6 +102,9 @@ class Custom_Post_Type_Plugin {
 		);
 	}
 
+	/**
+	 * Generate the plugin files
+	 */
 	public function build() {
 		$template_vars = $this->get_template_vars();
 
