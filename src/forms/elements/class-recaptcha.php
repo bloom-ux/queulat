@@ -8,20 +8,21 @@ use Queulat\Forms\Form_Control_Trait;
 
 class Recaptcha extends Form_Component {
 	use Form_Control_Trait;
+
 	public function __toString() {
 		$div = Node_Factory::make(
 			Div::class,
-			[
-				'attributes' => [
+			array(
+				'attributes' => array(
 					'class'        => 'g-recaptcha',
 					'data-sitekey' => static::get_site_key(),
-				],
-			]
+				),
+			)
 		);
-		wp_enqueue_script( 'recaptcha', 'https://www.google.com/recaptcha/api.js', [], null, true );
+		wp_enqueue_script( 'recaptcha', 'https://www.google.com/recaptcha/api.js', array(), null, true );
 		return (string) $div;
 	}
-	public static function get_site_key() : string {
+	public static function get_site_key(): string {
 		if ( defined( 'RECAPTCHA_SITE_KEY' ) ) {
 			return RECAPTCHA_SITE_KEY;
 		}
@@ -31,7 +32,7 @@ class Recaptcha extends Form_Component {
 		$site_key = apply_filters( 'queulat/forms/element/recaptcha__site-key', '' );
 		return $site_key;
 	}
-	public static function get_site_secret() : string {
+	public static function get_site_secret(): string {
 		if ( defined( 'RECAPTCHA_SITE_SECRET' ) ) {
 			return RECAPTCHA_SITE_SECRET;
 		}

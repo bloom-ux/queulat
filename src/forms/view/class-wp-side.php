@@ -24,7 +24,7 @@ class WP_Side extends Forms\Form_View {
 				$this->set_input_size( $element );
 				$out     .= '<div class="control-group">';
 					$out .= '<p>';
-				if ( is_callable( [ $element, 'get_label' ] ) && ! empty( $element->get_label() ) ) {
+				if ( is_callable( array( $element, 'get_label' ) ) && ! empty( $element->get_label() ) ) {
 					$out .= '<label for="' . $element->get_attribute( 'id' ) . '">' . $element->get_label() . ':</label> ';
 				}
 						$out .= (string) $element;
@@ -48,7 +48,7 @@ class WP_Side extends Forms\Form_View {
 		if ( ! $has_id ) {
 			$element->set_attribute( 'id', $form_id . '-' . $this->i );
 		}
-		$this->i++;
+		++$this->i;
 	}
 	/**
 	 * Automatically set a suitable class for text input fields

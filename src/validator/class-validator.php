@@ -7,7 +7,7 @@ use Queulat\Validator\Validator_Interface;
 class Validator {
 	protected $data;
 	protected $rules;
-	protected $errors    = [];
+	protected $errors    = array();
 	protected $is_valid  = false;
 	protected $validated = false;
 
@@ -19,13 +19,12 @@ class Validator {
 
 		$this->data  = $data;
 		$this->rules = $rules;
-
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function is_valid() : bool {
+	public function is_valid(): bool {
 
 		if ( $this->validated ) {
 			return $this->is_valid;
@@ -40,6 +39,12 @@ class Validator {
 		return $this->is_valid;
 	}
 
+	/**
+	 * Execute validation for all rules and data.
+	 *
+	 * @since 0.1.0
+	 * @return void
+	 */
 	protected function validate_loop() {
 		if ( $this->validated ) {
 			return;
@@ -58,6 +63,15 @@ class Validator {
 		$this->validated = true;
 	}
 
+	/**
+	 * Validate a single piece of data against a validator.
+	 *
+	 * @since 0.1.0
+	 * @param string              $name      Field name.
+	 * @param mixed               $value     Field value.
+	 * @param Validator_Interface $validator Validator instance.
+	 * @return void
+	 */
 	protected function validate_data( $name, $value, Validator_Interface $validator ) {
 		if ( ! $validator->is_valid( $value ) ) {
 			$this->errors[ $name ] = $validator->get_message();
@@ -67,15 +81,14 @@ class Validator {
 	/**
 	 * @return bool
 	 */
-	public function is_invalid() : bool {
+	public function is_invalid(): bool {
 		return ! $this->is_valid();
 	}
 
 	/**
 	 * @return array
 	 */
-	public function get_error_messages() : array {
+	public function get_error_messages(): array {
 		return $this->errors;
 	}
-
 }

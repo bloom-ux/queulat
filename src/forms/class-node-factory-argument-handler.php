@@ -35,7 +35,7 @@ class Node_Factory_Argument_Handler {
 	 * @param string $argument The argument key used on the Factory
 	 * @return Node_Factory_Argument_Handler Reference to this
 	 */
-	public function set_argument( string $argument ) : Node_Factory_Argument_Handler {
+	public function set_argument( string $argument ): Node_Factory_Argument_Handler {
 		$this->argument = $argument;
 		return $this;
 	}
@@ -46,7 +46,7 @@ class Node_Factory_Argument_Handler {
 	 * @param string $method Name of the method
 	 * @return Node_Factory_Argument_Handler
 	 */
-	public function set_method( string $method ) : Node_Factory_Argument_Handler {
+	public function set_method( string $method ): Node_Factory_Argument_Handler {
 		$this->method = $method;
 		return $this;
 	}
@@ -58,7 +58,7 @@ class Node_Factory_Argument_Handler {
 	 * @see    Node_Factory
 	 * @return Node_Factory_Argument_Handler
 	 */
-	public function set_call_type( string $call_type ) : Node_Factory_Argument_Handler {
+	public function set_call_type( string $call_type ): Node_Factory_Argument_Handler {
 		$this->call_type = $call_type;
 		return $this;
 	}

@@ -1,8 +1,26 @@
 <?php
+/**
+ * Array utility class.
+ *
+ * Provides static methods for common array operations including
+ * associative array detection, flattening, and recursive filtering.
+ *
+ * @package Queulat
+ */
 
 namespace Queulat\Helpers;
 
+/**
+ * Arrays utilities
+ */
 class Arrays {
+	/**
+	 * Private constructor to prevent instantiation.
+	 *
+	 * This class should only be used statically.
+	 *
+	 * @since 0.1.0
+	 */
 	private function __construct() {
 	}
 
@@ -11,43 +29,43 @@ class Arrays {
 	 *
 	 * An array is "associative" if it doesn't have sequential numeric keys beginning with zero.
 	 *
-	 * @param  iterable|object $array
+	 * @param  iterable|object $arr The tested array.
 	 * @return bool
 	 */
-	public static function is_associative($array) : bool {
-		$keys = is_array( $array ) ? array_keys( $array ) : array_keys( $array->getArrayCopy() );
+	public static function is_associative( $arr ): bool {
+		$keys = is_array( $arr ) ? array_keys( $arr ) : array_keys( $arr->getArrayCopy() );
 		return array_keys( $keys ) !== $keys;
 	}
 
 	/**
 	 * Flatten a multi-dimensional associative array with dots.
 	 *
-	 * @param array $array Input array.
+	 * @param array $arr   Input array.
 	 * @param int   $mode  Mode of flattening.
 	 * @return array Array with dotted keys
 	 * @see \Minwork\Helper\Arr for mode constants.
 	 */
-	public static function flatten( array $array, int $mode = \Minwork\Helper\Arr::UNPACK_ALL ) : array {
-		return \Minwork\Helper\Arr::unpack( $array, $mode );
+	public static function flatten( array $arr, int $mode = \Minwork\Helper\Arr::UNPACK_ALL ): array {
+		return \Minwork\Helper\Arr::unpack( $arr, $mode );
 	}
 
 	/**
 	 * Reverse a flattened array in its original form.
 	 *
-	 * @param  array  $array flattened array
-	 * @param  string $glue  glue used in flattening
+	 * @param  array  $arr  Flattened array.
+	 * @param  string $glue Glue used in flattening.
 	 * @return array  the unflattened array
 	 */
-	public static function reverse_flatten(array $array, string $glue = '.') : array {
+	public static function reverse_flatten( array $arr, string $glue = '.' ): array {
 		$return = array();
-		foreach ( $array as $key => $value ) {
+		foreach ( $arr as $key => $value ) {
 			if ( stripos( $key, $glue ) !== false ) {
 				$keys = explode( $glue, $key );
 				$temp =& $return;
-				while ( count( $keys ) > 1 ) {
+				while ( count( $keys ) > 1 ) { //phpcs:ignore
 					$key = array_shift( $keys );
 					$key = is_numeric( $key ) ? (int) $key : $key;
-					if ( ! isset( $temp[ $key ] ) or ! is_array( $temp[ $key ] ) ) {
+					if ( ! isset( $temp[ $key ] ) || ! is_array( $temp[ $key ] ) ) {
 						$temp[ $key ] = array();
 					}
 					$temp =& $temp[ $key ];
@@ -66,16 +84,16 @@ class Arrays {
 	/**
 	 * Recursively filter an array
 	 *
-	 * @param  array    $array    The input array
-	 * @param  callable $callback A custom function for filtering (by default, uses array_filter)
+	 * @param  array    $arr      The input array.
+	 * @param  callable $callback A custom function for filtering (by default, uses array_filter).
 	 * @return array              Filtered array
 	 */
-	public static function filter_recursive(array $array, $callback = null) {
-		foreach ( $array as &$value ) {
+	public static function filter_recursive( array $arr, $callback = null ) {
+		foreach ( $arr as &$value ) {
 			if ( is_array( $value ) ) {
-				$value = $callback === null ? static::filter_recursive( $value ) : static::filter_recursive( $value, $callback );
+				$value = null === $callback ? static::filter_recursive( $value ) : static::filter_recursive( $value, $callback );
 			}
 		}
-		return $callback === null ? array_filter( $array ) : array_filter( $array, $callback );
+		return null === $callback ? array_filter( $arr ) : array_filter( $arr, $callback );
 	}
 }

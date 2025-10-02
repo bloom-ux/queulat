@@ -8,6 +8,7 @@ use Queulat\Forms\Option_Node_Interface;
 
 class UI_Select2 extends Form_Component implements Option_Node_Interface {
 	use Options_Trait;
+
 	public function __toString() {
 		$this->add_class( 'select-2' );
 		$instance = array();

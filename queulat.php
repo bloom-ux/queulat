@@ -18,4 +18,4 @@ if ( is_readable( __DIR__ . '/vendor/autoload.php' ) ) {
 	require_once __DIR__ . '/queulat/vendor/autoload.php';
 }
 
-( new Queulat\Bootstrap )->init();
+( new Queulat\Bootstrap() )->init();

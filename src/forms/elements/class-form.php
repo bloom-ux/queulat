@@ -11,8 +11,8 @@ class Form extends HTML_Element {
 		'text/plain',
 	);
 	protected $view                 = '';
-	public static function get_element_attributes() : array {
-		return [
+	public static function get_element_attributes(): array {
+		return array(
 			'accept-charset',
 			'action',
 			'autocomplete',
@@ -21,26 +21,26 @@ class Form extends HTML_Element {
 			'name',
 			'novalidate',
 			'target',
-		];
+		);
 	}
-	public function get_tag_name() : string {
+	public function get_tag_name(): string {
 		return 'form';
 	}
-	public function set_view( $view_class ) : Form {
+	public function set_view( $view_class ): Form {
 		if ( ! in_array( 'Queulat\Forms\View_Interface', class_implements( $view_class ) ) ) {
 			throw new \InvalidArgumentException();
 		}
 		$this->view = $view_class;
 		return $this;
 	}
-	public function get_view() : string {
+	public function get_view(): string {
 		if ( empty( $this->view ) ) {
 			return apply_filters( 'queulat_form_default_view', '\Queulat\Forms\View\WP_Wide' );
 		} else {
 			return $this->view;
 		}
 	}
-	public function __toString() : string {
+	public function __toString(): string {
 		$out      = '';
 		$__v      = $this->get_view();
 		$view     = new $__v( $this );

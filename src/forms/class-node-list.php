@@ -11,7 +11,7 @@ class Node_List extends \ArrayIterator implements Node_List_Interface {
 	/**
 	 * @inheritDoc
 	 */
-	public function get_item( $index ) : Node_Interface {
+	public function get_item( $index ): Node_Interface {
 		return $this->offsetGet( $index );
 	}
 }

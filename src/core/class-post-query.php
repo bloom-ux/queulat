@@ -21,6 +21,11 @@ namespace Queulat;
 use Exception;
 use WP_Query;
 
+/**
+ * Abstract Post_Query
+ *
+ * Custom post types extend this class
+ */
 abstract class Post_Query implements \Iterator, \Countable {
 
 	/**
@@ -42,7 +47,7 @@ abstract class Post_Query implements \Iterator, \Countable {
 	 *
 	 * @var \WP_Post
 	 */
-	private $_wp_post;
+	private $wp_post;
 
 	/**
 	 * The post type slug for this type of query
@@ -66,7 +71,12 @@ abstract class Post_Query implements \Iterator, \Countable {
 	protected $decorator;
 
 	/**
-	 * @param array $query_args An array of arguments passed on to WP_Query
+	 * Create a new query of Post_Objects
+	 *
+	 * You can loop with foreach to get initialized custom objects.
+	 *
+	 * @param array $query_args An array of arguments passed on to WP_Query.
+	 * @throws \Exception If the decorator class is not a subclass of Post_Object.
 	 */
 	public function __construct( array $query_args = array() ) {
 		$this->query_args = $query_args;
@@ -75,9 +85,10 @@ abstract class Post_Query implements \Iterator, \Countable {
 		if ( ! $this->decorator ) {
 			$this->decorator = 'Queulat\Post_Object';
 		}
-		// @todo
 		if ( ! is_subclass_of( $this->decorator, 'Queulat\Post_Object' ) ) {
-			throw new \Exception( sprintf( __( '%s must be a subclass of Queulat\Post_Object', 'queulat' ), $this->decorator ) );
+			/* translators: %s: name of the php subclass */
+			$message = __( '%s must be a subclass of Queulat\Post_Object', 'queulat' );
+			throw new \Exception( esc_html( sprintf( $message, $this->decorator ) ) );
 		}
 	}
 
@@ -86,14 +97,14 @@ abstract class Post_Query implements \Iterator, \Countable {
 	 *
 	 * @return string A post type slug
 	 */
-	abstract protected function get_post_type() : string;
+	abstract protected function get_post_type(): string;
 
 	/**
 	 * Get the name for the WP_Post decorator
 	 *
 	 * @return string The FQN of a WP_Post decorator. It could be empty
 	 */
-	abstract protected function get_decorator() : string;
+	abstract protected function get_decorator(): string;
 
 	/**
 	 * Parse query params and execute WP_Query
@@ -102,7 +113,7 @@ abstract class Post_Query implements \Iterator, \Countable {
 		$default_args = array(
 			'post_type' => $this->get_post_type(),
 		);
-		if ( is_callable( [ $this, 'get_default_args' ] ) ) {
+		if ( is_callable( array( $this, 'get_default_args' ) ) ) {
 			$default_args = array_merge( $default_args, $this->get_default_args() );
 		}
 		$query_args  = wp_parse_args( $this->query_args, $default_args );
@@ -114,19 +125,24 @@ abstract class Post_Query implements \Iterator, \Countable {
 	 *
 	 * @return array
 	 */
-	public function get_default_args() : array {
-		return [];
+	public function get_default_args(): array {
+		return array();
 	}
 
 	/**
-	 * Re-use an existing WP_Query (for instance, on archive templates where it doesn't make sense to repeat the query)
+	 * Re-use an existing WP_Query
 	 *
-	 * @param \WP_Query $query object
-	 * @throws \Exception Fails if $this->query was already set
+	 * For instance, on archive templates where it doesn't make sense
+	 * to repeat the query.
+	 *
+	 * @param \WP_Query $query A WP_Query object to loop over.
+	 * @throws \Exception Fails if $this->query was already set.
 	 */
 	public function set_query( WP_Query $query ) {
 		if ( $this->query instanceof \WP_Query ) {
-			throw new \Exception( sprintf( __( 'The query for this object was already set. You might want to create a new %s', 'queulat' ), get_called_class() ) );
+			/* translators: %s: name of the PHP class that was called */
+			$message = __( 'The query for this object was already set. You might want to create a new %s', 'queulat' );
+			throw new \Exception( esc_html( sprintf( $message, get_called_class() ) ) );
 		}
 		$this->query     = $query;
 		$this->post_type = $this->query->get( 'post_type' );
@@ -138,7 +154,7 @@ abstract class Post_Query implements \Iterator, \Countable {
 	 *
 	 * @return \WP_Query The current WP_Query
 	 */
-	public function get_query() : WP_Query {
+	public function get_query(): WP_Query {
 		if ( ! $this->query ) {
 			$this->do_query();
 		}
@@ -150,7 +166,7 @@ abstract class Post_Query implements \Iterator, \Countable {
 	 *
 	 * @return array Array with the ID for each post in current query
 	 */
-	public function get_found_posts_ids() : array {
+	public function get_found_posts_ids(): array {
 		if ( ! isset( $this->query ) ) {
 			$this->do_query();
 			$this->pre_loop();
@@ -163,7 +179,7 @@ abstract class Post_Query implements \Iterator, \Countable {
 	 *
 	 * @return int The number of posts on the current query
 	 */
-	public function count() : int {
+	public function count(): int {
 		if ( ! isset( $this->query ) ) {
 			$this->do_query();
 			$this->pre_loop();
@@ -171,6 +187,13 @@ abstract class Post_Query implements \Iterator, \Countable {
 		return $this->query->post_count;
 	}
 
+	/**
+	 * Improve debugging info
+	 *
+	 * Makes sure the query was initialized when using var_dump()
+	 *
+	 * @return array Object properties with proper query info
+	 */
 	public function __debugInfo() {
 		if ( ! isset( $this->query ) ) {
 			$this->rewind();
@@ -180,10 +203,11 @@ abstract class Post_Query implements \Iterator, \Countable {
 
 
 	/**
-	 * Iterator methods
+	 * Return the current Post_Object element on the loop
+	 *
+	 * @return Post_Object Current element on the loop
 	 */
-
-	public function current() : Post_Object {
+	public function current(): Post_Object {
 		if ( isset( $this->the_post ) ) {
 			return $this->the_post;
 		}
@@ -195,7 +219,13 @@ abstract class Post_Query implements \Iterator, \Countable {
 		$this->the_post = new $this->decorator( $post );
 		return $this->the_post;
 	}
-	public function key() : int {
+
+	/**
+	 * Return the current element index
+	 *
+	 * @return int Index of the current item on the loop
+	 */
+	public function key(): int {
 		return $this->query->current_post;
 	}
 
@@ -218,9 +248,9 @@ abstract class Post_Query implements \Iterator, \Countable {
 	 */
 	#[\ReturnTypeWillChange]
 	public function rewind() {
-		// check if query was already made
+		// check if query was already made.
 		if ( ! isset( $this->query ) ) {
-			// if no custom query was made, we might want to use WordPress' query
+			// if no custom query was made, we might want to use WordPress' query.
 			global $wp_query;
 			if ( empty( $this->query_args ) && ( $wp_query->is_archive() || $wp_query->is_singular() ) ) {
 				$this->set_query( $wp_query );
@@ -232,21 +262,32 @@ abstract class Post_Query implements \Iterator, \Countable {
 			$this->query->rewind_posts();
 		}
 	}
-	public function valid() : bool {
+
+	/**
+	 * Check if the current position is valid
+	 *
+	 * @return bool True if there are more posts available in the loop
+	 */
+	public function valid(): bool {
 		if ( $this->query->have_posts() ) {
 			return true;
 		} else {
-			// loop it's ending, so let's cleanup
-			wp_reset_query();
-			// manually reset the post data
+			// loop it's ending, so let's cleanup.
+			wp_reset_query(); //phpcs:ignore
+			// manually reset the post data.
 			global $post;
-			$post = $this->_wp_post;
+			$post = $this->wp_post; //phpcs:ignore
 			return false;
 		}
 	}
 
+	/**
+	 * Create a copy of the global post befor a custom loop
+	 *
+	 * @return void
+	 */
 	private function pre_loop() {
 		global $post;
-		$this->_wp_post = $post;
+		$this->wp_post = $post;
 	}
 }

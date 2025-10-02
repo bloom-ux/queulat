@@ -5,14 +5,21 @@ namespace Queulat\Generator\Builder;
 use Queulat\Helpers\Arrays;
 
 class Custom_Post_Type {
-	private $params = [];
+
+
+	/**
+	 * Parameters to build the custom post type, sanitized
+	 *
+	 * @var array
+	 */
+	private $params = array();
 
 	/**
 	 * List of reserved keywords that can't be used as CPT slug
 	 *
 	 * @var array
 	 */
-	public static $reserved_keywords = [
+	public static $reserved_keywords = array(
 		'action',
 		'attachment',
 		'author',
@@ -24,15 +31,26 @@ class Custom_Post_Type {
 		'post',
 		'revision',
 		'theme',
-	];
+	);
 
-	public function __construct( array $params = [] ) {
+	/**
+	 * Build a new custom post type generator
+	 *
+	 * @param array $params Input for the generator.
+	 */
+	public function __construct( array $params = array() ) {
 		if ( $params ) {
 			$this->params = $this->sanitize_input( $params );
 		}
 	}
-	public static function get_supports() : array {
-		return [
+
+	/**
+	 * Get list of features that a custom post type can support
+	 *
+	 * @return array Custom post type possible features as slug => label
+	 */
+	public static function get_supports(): array {
+		return array(
 			'title'           => __( 'Title', 'queulat' ),
 			'editor'          => __( 'Editor (content)', 'queulat' ),
 			'author'          => __( 'Author', 'queulat' ),
@@ -44,11 +62,18 @@ class Custom_Post_Type {
 			'revisions'       => __( 'Revisions', 'queulat' ),
 			'page-attributes' => __( 'Page attributes: menu order, parent (if hierarchical is true)', 'queulat' ),
 			'post-formats'    => __( 'Post formats', 'queulat' ),
-		];
+		);
 	}
-	public function sanitize_input( array $input ) : array {
+
+	/**
+	 * Sanitize the input given by the user to build the custom post type definition
+	 *
+	 * @param array $input Data sent by the user.
+	 * @return array Sanitized data
+	 */
+	public function sanitize_input( array $input ): array {
 		$flat      = Arrays::flatten( $input );
-		$sanitized = [];
+		$sanitized = array();
 		foreach ( $flat as $key => $val ) {
 			switch ( $key ) {
 				case 'slug':
@@ -84,6 +109,7 @@ class Custom_Post_Type {
 				case 'show_in_rest':
 				case 'rewrite_enable':
 					$sanitized[ $key ] = (bool) $val;
+					break;
 				default:
 					if ( stripos( $key, 'supports.' ) !== false ) {
 						if ( array_key_exists( $val, static::get_supports() ) ) {

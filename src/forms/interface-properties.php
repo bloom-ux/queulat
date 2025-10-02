@@ -20,14 +20,14 @@ interface Properties_Interface {
 	 * @return Node_Interface        Reference to the same object
 	 * @suppress PhanTypeMismatchReturn*
 	 */
-	public function set_property( string $key, $value ) : Node_Interface;
+	public function set_property( string $key, $value ): Node_Interface;
 
 	/**
 	 * Get the values for all defined properties, indexed by name
 	 *
 	 * @return array Value for all properties
 	 */
-	public function get_properties() : array;
+	public function get_properties(): array;
 
 	/**
 	 * Set element properties (attributes and others)
@@ -35,6 +35,5 @@ interface Properties_Interface {
 	 * @param array $properties Set of properties indexed by name
 	 * @suppress PhanTypeMismatchReturn*
 	 */
-	public function set_properties( array $properties ) : Node_Interface;
-
+	public function set_properties( array $properties ): Node_Interface;
 }

@@ -81,7 +81,7 @@ class WP_Wide extends Forms\Form_View {
 		if ( ! $has_id ) {
 			$element->set_attribute( 'id', $this->form->get_attribute( 'id' ) . '-element-' . $this->i );
 		}
-		$this->i++;
+		++$this->i;
 	}
 	/**
 	 * Automatically set a suitable class for text input fields

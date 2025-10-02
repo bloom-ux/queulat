@@ -14,7 +14,7 @@ trait Properties_Trait {
 	 *
 	 * @var array
 	 */
-	protected $properties = [];
+	protected $properties = array();
 
 	/**
 	 * Get any property from this element
@@ -34,7 +34,7 @@ trait Properties_Trait {
 	 * @return Node_Interface        Reference to the same object
 	 * @suppress PhanTypeMismatchReturn*
 	 */
-	public function set_property( string $key, $value ) : Node_Interface {
+	public function set_property( string $key, $value ): Node_Interface {
 		$this->properties[ $key ] = $value;
 		return $this;
 	}
@@ -44,7 +44,7 @@ trait Properties_Trait {
 	 *
 	 * @return array Value for all properties
 	 */
-	public function get_properties() : array {
+	public function get_properties(): array {
 		return $this->properties;
 	}
 
@@ -54,7 +54,7 @@ trait Properties_Trait {
 	 * @param array $properties Set of properties indexed by name
 	 * @suppress PhanTypeMismatchReturn*
 	 */
-	public function set_properties( array $properties ) : Node_Interface {
+	public function set_properties( array $properties ): Node_Interface {
 		$this->init_properties( $properties );
 		return $this;
 	}

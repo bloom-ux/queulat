@@ -31,7 +31,7 @@ class WP_Nonce extends Form_Component {
 	/**
 	 * @inheritDoc
 	 */
-	public function set_value( $value ) : Node_Interface {
+	public function set_value( $value ): Node_Interface {
 		$this->set_property( 'action', $value );
 		return $this;
 	}
@@ -58,14 +58,14 @@ class WP_Nonce extends Form_Component {
 	/**
 	 * @inheritDoc
 	 */
-	public function set_text_content( string $text ) : Node_Interface {
+	public function set_text_content( string $text ): Node_Interface {
 		return $this;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function get_text_content() : string {
+	public function get_text_content(): string {
 		return '';
 	}
 }

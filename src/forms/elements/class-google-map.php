@@ -12,70 +12,70 @@ class Google_Map extends Form_Component {
 	/**
 	 * @inheritDoc
 	 */
-	public function __toString() : string {
+	public function __toString(): string {
 		$name      = $this->get_name();
 		$value     = $this->get_value();
 		$container = Node_Factory::make(
 			Div::class,
-			[
-				'attributes' => [
+			array(
+				'attributes' => array(
 					'class' => 'queulat-gmapsearch',
-				],
-				'children'   => [
+				),
+				'children'   => array(
 					Node_Factory::make(
 						Input_Text::class,
-						[
+						array(
 							'name'       => "{$name}[address]",
 							'value'      => $value->address ?? '',
-							'attributes' => [
+							'attributes' => array(
 								'class'       => 'regular-text gmapsearch__address',
 								'placeholder' => __( 'Search for a location or address', 'queulat' ),
-							],
-						]
+							),
+						)
 					),
 					Node_Factory::make(
 						Div::class,
-						[
-							'attributes' => [
+						array(
+							'attributes' => array(
 								'class' => 'gmapsearch__canvas',
 								'style' => 'min-height: 360px',
-							],
-						]
+							),
+						)
 					),
 					Node_Factory::make(
 						Input_Hidden::class,
-						[
+						array(
 							'name'       => "{$name}[lat]",
 							'value'      => $value->lat ?? '',
-							'attributes' => [ 'class' => 'gmapsearch__lat' ],
-						]
+							'attributes' => array( 'class' => 'gmapsearch__lat' ),
+						)
 					),
 					Node_Factory::make(
 						Input_Hidden::class,
-						[
+						array(
 							'name'       => "{$name}[lng]",
 							'value'      => $value->lng ?? '',
-							'attributes' => [ 'class' => 'gmapsearch__lng' ],
-						]
+							'attributes' => array( 'class' => 'gmapsearch__lng' ),
+						)
 					),
 					Node_Factory::make(
 						Input_Hidden::class,
-						[
+						array(
 							'name'       => "{$name}[zoom]",
 							'value'      => $value->zoom ?? '',
-							'attributes' => [ 'class' => 'gmapsearch__zoom' ],
-						]
+							'attributes' => array( 'class' => 'gmapsearch__zoom' ),
+						)
 					),
 					Node_Factory::make(
 						Input_Hidden::class,
-						[
+						array(
 							'name'       => "{$name}[components]",
 							'value'      => $value->components ?? '',
-							'attributes' => [ 'class' => 'gmapsearch__components' ],
-						]
+							'attributes' => array( 'class' => 'gmapsearch__components' ),
+						)
 					),
-				],
-			]
+				),
+			)
 		);
 
 		$this->enqueue_assets();
@@ -90,20 +90,20 @@ class Google_Map extends Form_Component {
 	 */
 	public function enqueue_assets() {
 		static::enqueue_js_api();
-		wp_enqueue_script( 'queulat__google-map', queulat_url( 'src/forms/elements/js/element-google-map.js' ), [ 'jquery' ], '', true );
+		wp_enqueue_script( 'queulat__google-map', queulat_url( 'src/forms/elements/js/element-google-map.js' ), array( 'jquery' ), '', true );
 	}
 
 	public static function enqueue_js_api() {
 		$google_maps_url = add_query_arg(
-			[
+			array(
 				'v'         => 3,
 				'hl'        => get_option( 'WPLANG' ) ? current( explode( '_', get_option( 'WPLANG' ) ) ) : 'en',
 				'key'       => static::get_api_key(),
 				'libraries' => 'places',
-			],
+			),
 			'https://maps.googleapis.com/maps/api/js'
 		);
-		wp_enqueue_script( 'google-maps-api', $google_maps_url, [], null );
+		wp_enqueue_script( 'google-maps-api', $google_maps_url, array(), null );
 	}
 
 	/**
@@ -111,7 +111,7 @@ class Google_Map extends Form_Component {
 	 *
 	 * @return string
 	 */
-	public static function get_api_key() : string {
+	public static function get_api_key(): string {
 		if ( defined( 'GOOGLE_MAPS_API_KEY' ) ) {
 			return GOOGLE_MAPS_API_KEY;
 		}

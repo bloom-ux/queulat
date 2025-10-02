@@ -10,27 +10,27 @@ use Queulat\Forms\Element\Button;
 
 class Input_Multiple extends Form_Component {
 	public static function get_element_attributes(): array {
-		return [
+		return array(
 			'class',
 			'type',
-		];
+		);
 	}
-	public function __toString() : string {
+	public function __toString(): string {
 		$attributes = $this->get_attributes();
 		// filter attributes for the container.
 		$container_attributes = array_intersect( $attributes, array_flip( Div::get_element_attributes() ) );
 		$container            = Node_Factory::make(
 			Div::class,
-			[
+			array(
 				'attributes' => $container_attributes,
-			]
+			)
 		);
 		$container->add_class( 'js-queulat-input-multiple' );
 		$container->add_class( 'queulat-input-multiple' );
 		$input_type = $this->get_attribute( 'type' ) ?: 'text';
 		$values     = (array) $this->get_value();
 		if ( ( is_array( $values ) && empty( array_filter( $values ) ) ) || empty( $values ) ) {
-			$values = [];
+			$values = array();
 		}
 		$name = $this->get_name();
 		do {
@@ -41,43 +41,43 @@ class Input_Multiple extends Form_Component {
 			$container->append_child(
 				Node_Factory::make(
 					Div::class,
-					[
-						'attributes' => [
+					array(
+						'attributes' => array(
 							'class' => 'queulat-input-multiple__item',
-						],
-						'children'   => [
+						),
+						'children'   => array(
 							Node_Factory::make(
 								Div::class,
-								[
-									'attributes'   => [
+								array(
+									'attributes'   => array(
 										'class' => 'queulat-input-multiple__item-sort',
-									],
+									),
 									'text_content' => '<span class="dashicons dashicons-sort"></span>',
-								]
+								)
 							),
 							Node_Factory::make(
 								Input::class,
-								[
-									'attributes' => [
+								array(
+									'attributes' => array(
 										'class' => 'queulat-input-multiple__input',
 										'type'  => $input_type,
 										'name'  => $name . '[]',
 										'value' => $value ?: '',
-									],
-								]
+									),
+								)
 							),
 							Node_Factory::make(
 								Button::class,
-								[
-									'attributes'   => [
+								array(
+									'attributes'   => array(
 										'type'  => 'button',
 										'class' => 'queulat-input-multiple__item-delete button',
-									],
+									),
 									'text_content' => _x( 'Delete value', 'multiple input action', 'queulat' ),
-								]
+								)
 							),
-						],
-					]
+						),
+					)
 				)
 			);
 			next( $values );
@@ -85,23 +85,23 @@ class Input_Multiple extends Form_Component {
 		$container->append_child(
 			Node_Factory::make(
 				Div::class,
-				[
-					'attributes' => [
+				array(
+					'attributes' => array(
 						'class' => 'queulat-input-multiple__controls',
-					],
-					'children'   => [
+					),
+					'children'   => array(
 						Node_Factory::make(
 							Button::class,
-							[
-								'attributes'   => [
+							array(
+								'attributes'   => array(
 									'type'  => 'button',
 									'class' => 'queulat-input-multiple__add-new button',
-								],
+								),
 								'text_content' => _x( 'Add new', 'multiple input action', 'queulat' ),
-							]
+							)
 						),
-					],
-				]
+					),
+				)
 			)
 		);
 		wp_enqueue_script( 'queulat-element-input-multiple', plugins_url( 'js/element-input-multiple.js', __FILE__ ), array( 'jquery', 'jquery-ui-sortable' ) );

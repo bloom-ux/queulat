@@ -42,19 +42,19 @@ class Custom_Post_Type_Plugin {
 	 *
 	 * @return string
 	 */
-	private function render_post_type_arguments() : string {
+	private function render_post_type_arguments(): string {
 		$object_vars                    = get_object_vars( $this->wp_post_type );
 		$longest_key                    = Renderer::get_longest_key_length( array_keys( $object_vars ) );
-		$object_vars['capability_type'] = [
+		$object_vars['capability_type'] = array(
 			$this->wp_post_type->name,
 			Strings::plural( $this->wp_post_type->name ),
-		];
+		);
 		$properties                     = '';
-		$localize                       = [
+		$localize                       = array(
 			'label',
 			'labels',
 			'description',
-		];
+		);
 		foreach ( $object_vars as $key => $val ) {
 			// internal properties
 			if ( strpos( $key, '_' ) === 0 || $key == 'name' || $key == 'cap' ) {
@@ -70,7 +70,7 @@ class Custom_Post_Type_Plugin {
 	 *
 	 * @return array Associative array with var name as keys
 	 */
-	public function get_template_vars() : array {
+	public function get_template_vars(): array {
 		$label               = $this->wp_post_type->label;
 		$file_name           = strtolower( Strings::to_kebab_case( $this->wp_post_type->name ) );
 		$class_name          = Strings::to_capitalized_snake_case( $this->raw_slug );
@@ -85,13 +85,13 @@ class Custom_Post_Type_Plugin {
 	 *
 	 * @return array
 	 */
-	public function get_templates() : array {
-		return [
+	public function get_templates(): array {
+		return array(
 			'stub-cpt-plugin.twig',
 			'class-stub-post-type.twig',
 			'class-stub-post-query.twig',
 			'class-stub-post-object.twig',
-		];
+		);
 	}
 
 	public function build() {
@@ -102,20 +102,20 @@ class Custom_Post_Type_Plugin {
 		$prefix = apply_filters( 'quelat_generate_builder_ctp_plugin', 'queulat-' );
 
 		$loader       = new FilesystemLoader( __DIR__ . '/../stubs' );
-		$twig         = new Environment( $loader, [] );
+		$twig         = new Environment( $loader, array() );
 		$templates    = $this->get_templates();
-		$output_files = [];
+		$output_files = array();
 		foreach ( $templates as $template ) {
 			$output_file_name                  = str_ireplace(
-				[ 'stub', 'twig' ],
-				[ $stub, 'php' ],
+				array( 'stub', 'twig' ),
+				array( $stub, 'php' ),
 				$template
 			);
 			$output_files[ $output_file_name ] = $twig->render( $template, $template_vars );
 		}
 
 		$url   = wp_nonce_url( 'tools.php?page=queulat-cpt-plugin-generator', 'queulat-cpt-plgin-generator' );
-		$creds = request_filesystem_credentials( $url, '', false, WP_PLUGIN_DIR, [] );
+		$creds = request_filesystem_credentials( $url, '', false, WP_PLUGIN_DIR, array() );
 
 		if ( ! $creds ) {
 			// @todo si no tengo credenciales... generar un zip?

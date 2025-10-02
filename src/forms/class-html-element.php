@@ -7,7 +7,9 @@ namespace Queulat\Forms;
  */
 abstract class HTML_Element implements HTML_Element_Interface {
 
-	use Node_Trait, Attributes_Trait, Properties_Trait;
+	use Node_Trait;
+	use Attributes_Trait;
+	use Properties_Trait;
 
 	/**
 	 * Build an HTMLElement
@@ -37,8 +39,8 @@ abstract class HTML_Element implements HTML_Element_Interface {
 	/**
 	 * @inheritDoc
 	 */
-	public static function get_global_attributes() : array {
-		return [
+	public static function get_global_attributes(): array {
+		return array(
 			'accesskey',
 			'class',
 			'contenteditable',
@@ -51,7 +53,6 @@ abstract class HTML_Element implements HTML_Element_Interface {
 			'tabindex',
 			'title',
 			'translate',
-		];
+		);
 	}
-
 }

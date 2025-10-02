@@ -1,4 +1,9 @@
 <?php
+/**
+ * Abstract class for generating simple administration pages
+ *
+ * @package Queulat
+ */
 
 namespace Queulat\Helpers;
 
@@ -26,44 +31,44 @@ abstract class Abstract_Admin {
 	 *
 	 * @return string
 	 */
-	abstract public function get_id() : string;
+	abstract public function get_id(): string;
 
 	/**
 	 * Get the title of the admin page
 	 *
 	 * @return string
 	 */
-	abstract public function get_title() : string;
+	abstract public function get_title(): string;
 
 	/**
 	 * Get the menu title of the page
 	 *
 	 * @return string
 	 */
-	abstract public function get_menu_title() : string;
+	abstract public function get_menu_title(): string;
 
 	/**
 	 * Get the form elements that compose the admin page
 	 *
 	 * @return array
 	 */
-	abstract public function get_form_elements() : array;
+	abstract public function get_form_elements(): array;
 
 	/**
 	 * Sanitize form pdata
 	 *
-	 * @param array $input An array or iterable of form elements/components
+	 * @param array $input An array or iterable of form elements/components.
 	 * @return array
 	 */
-	abstract public function sanitize_data( $input ) : array;
+	abstract public function sanitize_data( $input ): array;
 
 	/**
 	 * Get data validation rules
 	 *
-	 * @param array $sanitized_data Sanitized input data
+	 * @param array $sanitized_data Sanitized input data.
 	 * @return array An array of validation rules with form element names as keys
 	 */
-	abstract public function get_validation_rules( array $sanitized_data ) : array;
+	abstract public function get_validation_rules( array $sanitized_data ): array;
 
 	/**
 	 * Get the admin menu icon. Can be a URL to the icon file or a string
@@ -72,22 +77,22 @@ abstract class Abstract_Admin {
 	 * @link https://developer.wordpress.org/resource/dashicons/
 	 * @return string
 	 */
-	abstract public function get_icon() : string;
+	abstract public function get_icon(): string;
 
 	/**
 	 * Define the action performed by the form
 	 *
-	 * @param array $data Validated and sanitized data
+	 * @param array $data Validated and sanitized data.
 	 * @return bool
 	 */
-	abstract public function process_data( array $data ) : bool;
+	abstract public function process_data( array $data ): bool;
 
 	/**
 	 * The parent page slug. If empty, it will be added as a top level page
 	 *
 	 * @return string
 	 */
-	public function get_parent_page() : string {
+	public function get_parent_page(): string {
 		return '';
 	}
 
@@ -96,7 +101,7 @@ abstract class Abstract_Admin {
 	 *
 	 * @return string
 	 */
-	public function get_required_capability() : string {
+	public function get_required_capability(): string {
 		return 'activate_plugins';
 	}
 
@@ -108,8 +113,8 @@ abstract class Abstract_Admin {
 	 *
 	 * @return string Success URL
 	 */
-	public function get_redirect_url() : string {
-		// get the relative path to the WordPress Admin
+	public function get_redirect_url(): string {
+		// get the relative path to the WordPress Admin.
 		$relative_admin_url = str_replace( home_url(), '', admin_url() );
 		$redirect_url       = str_replace( $relative_admin_url, '', filter_input( INPUT_POST, '_wp_http_referer', FILTER_SANITIZE_URL ) );
 		return $redirect_url;
@@ -122,10 +127,10 @@ abstract class Abstract_Admin {
 	 *
 	 * @return array
 	 */
-	public function get_success_url_params() : array {
-		return [
+	public function get_success_url_params(): array {
+		return array(
 			'updated' => 'true',
-		];
+		);
 	}
 
 	/**
@@ -135,7 +140,7 @@ abstract class Abstract_Admin {
 	 * @link https://codex.wordpress.org/register_post_type#Arguments
 	 * @return integer
 	 */
-	public function get_position() : int {
+	public function get_position(): int {
 		return 0;
 	}
 
@@ -147,8 +152,8 @@ abstract class Abstract_Admin {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'admin_menu', [ $this, 'admin_menu' ] );
-		add_action( 'admin_init', [ $this, 'process_form' ] );
+		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
+		add_action( 'admin_init', array( $this, 'process_form' ) );
 	}
 
 	/**
@@ -156,14 +161,14 @@ abstract class Abstract_Admin {
 	 *
 	 * @return string The admin hook of the registered (sub)page
 	 */
-	public function admin_menu() : string {
+	public function admin_menu(): string {
 		if ( empty( $this->get_parent_page() ) ) {
 			$this->admin_hook = add_menu_page(
 				$this->get_title(),
 				$this->get_menu_title(),
 				$this->get_required_capability(),
 				$this->get_id(),
-				[ $this, 'admin_page' ],
+				array( $this, 'admin_page' ),
 				$this->get_icon(),
 				$this->get_position()
 			);
@@ -174,7 +179,7 @@ abstract class Abstract_Admin {
 				$this->get_menu_title(),
 				$this->get_required_capability(),
 				$this->get_id(),
-				[ $this, 'admin_page' ],
+				array( $this, 'admin_page' ),
 				$this->get_position() ? $this->get_position() : null
 			);
 		}
@@ -194,38 +199,38 @@ abstract class Abstract_Admin {
 		$form->append_child(
 			Node_Factory::make(
 				Input_Hidden::class,
-				[
+				array(
 					'name'  => 'action',
 					'value' => $this->get_id() . '__submit',
-				]
+				)
 			)
 		);
 		$form->append_child(
 			Node_Factory::make(
 				Button::class,
-				[
-					'attributes'   => [
+				array(
+					'attributes'   => array(
 						'type'  => 'submit',
 						'class' => 'button button-primary',
-					],
-					'text_content' => _x( 'Save', 'admin form', 'gutenpress' ),
-				]
+					),
+					'text_content' => _x( 'Save', 'admin form', 'queulat' ),
+				)
 			)
 		);
 		$form->append_child(
 			Node_Factory::make(
 				WP_Nonce::class,
-				[
-					'properties' => [
+				array(
+					'properties' => array(
 						'action' => "{$this->get_id()}__submit",
 						'name'   => "_{$this->get_id()}__submit-nonce",
-					],
-				]
+					),
+				)
 			)
 		);
 
 		echo '<div class="wrap">';
-		echo "<h1>{$this->get_title()}</h1>";
+		echo '<h1>' . esc_html( $this->get_title() ) . '</h1>';
 
 		/**
 		 * Allows for customization of the search form or printing stuff just before it
@@ -235,7 +240,7 @@ abstract class Abstract_Admin {
 		 */
 		do_action( "queulat_abstract_admin_form_{$this->get_id()}", $form, $this );
 
-		echo (string) $form;
+		echo (string) $form; //phpcs:ignore
 		echo '</div>';
 	}
 
@@ -249,7 +254,7 @@ abstract class Abstract_Admin {
 	 * @return void
 	 */
 	public function process_form() {
-		if ( filter_input( INPUT_POST, 'action', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) != $this->get_id() . '__submit' ) {
+		if ( filter_input( INPUT_POST, 'action', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) !== $this->get_id() . '__submit' ) {
 			return;
 		}
 		check_admin_referer( "{$this->get_id()}__submit", "_{$this->get_id()}__submit-nonce" );
@@ -266,12 +271,11 @@ abstract class Abstract_Admin {
 		 * @param array  Sanitized data
 		 * @param static Instantiated admin
 		 */
-		do_action( "queulat_abstract_admin_before_process_data", $sanitized, $this );
+		do_action( 'queulat_abstract_admin_before_process_data', $sanitized, $this );
 		if ( $this->process_data( $sanitized ) ) {
 			wp_safe_redirect( add_query_arg( $this->get_success_url_params(), $this->get_redirect_url() ), 303 );
 			exit;
 		}
-		return;
 	}
 
 	/**
@@ -279,11 +283,10 @@ abstract class Abstract_Admin {
 	 *
 	 * @return string Hook name for admin page
 	 */
-	public function get_admin_hook() : string {
+	public function get_admin_hook(): string {
 		if ( ! empty( $this->admin_hook ) ) {
 			return $this->admin_hook;
 		}
 		return get_plugin_page_hookname( $this->get_id(), $this->get_parent_page() );
 	}
-
 }

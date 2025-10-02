@@ -13,8 +13,14 @@
  *
  * @package Queulat
  */
+
 namespace Queulat;
 
+/**
+ * Abstract Post_Object
+ *
+ * A custom post type extends this class to add it's own methods
+ */
 abstract class Post_Object {
 	/**
 	 * Hold a copy of the original WP_Post object
@@ -28,8 +34,14 @@ abstract class Post_Object {
 	 *
 	 * @var array
 	 */
-	private $known_properties = [];
+	private $known_properties = array();
 
+	/**
+	 * Constructor.
+	 *
+	 * @since 0.1.0
+	 * @param int|\WP_Post|null $post Post ID, post object, or null for current post.
+	 */
 	public function __construct( $post = null ) {
 		$this->post = get_post( $post );
 	}
@@ -37,10 +49,10 @@ abstract class Post_Object {
 	/**
 	 * Build a Post_Object instance from a WP_Post object, an ID or from the currently looped post
 	 *
-	 * @param  int|\WP_Post|null $post A post or ID to build a new Post_Object
+	 * @param  int|\WP_Post|null $post A post or ID to build a new Post_Object.
 	 * @return Post_Object                  Instantiated Post_Object
 	 */
-	public static function get_instance( $post = null ) : Post_Object {
+	public static function get_instance( $post = null ): Post_Object {
 		$post = get_post( $post );
 		return new static( $post );
 	}
@@ -54,15 +66,15 @@ abstract class Post_Object {
 	 * This method will get the data and return as a string if it has
 	 * a single value or as an array if it has more than one value
 	 *
-	 * @param  string $key Name of the property, ie a "meta_key"
+	 * @param  string $key Name of the property, ie a "meta_key".
 	 * @return string|array Value for the meta property
 	 */
 	public function __get( string $key ) {
-		// if we already got that property, inmediately return it
+		// if we already got that property, inmediately return it.
 		if ( isset( $this->known_properties[ $key ] ) ) {
 			return $this->known_properties[ $key ];
 		}
-		// if it's a post field, return that
+		// if it's a post field, return that.
 		if ( isset( $this->post->{$key} ) ) {
 			return $this->post->{$key};
 		}
@@ -74,15 +86,15 @@ abstract class Post_Object {
 			$this->known_properties['permalink'] = get_permalink( $this->post->ID );
 			return $this->known_properties['permalink'];
 		}
-		// we don't know which values could have multiple values
-		// so... let's check that
+		// we don't know which values could have multiple values.
+		// so... let's check that.
 		$value = get_post_meta( $this->post->ID, $key, false );
 		if ( empty( $value ) ) {
-			// probably not a postmeta, let the magic in WP_Post handle it
+			// probably not a postmeta, let the magic in WP_Post handle it.
 			return $this->post->{$key};
 		} elseif ( count( $value ) === 1 ) {
-			// return as a single field
-			// (could be an array itself if data is serialized)
+			// return as a single field.
+			// (could be an array itself if data is serialized).
 			$this->known_properties[ $key ] = $value[0];
 		} else {
 			$this->known_properties[ $key ] = $value;
@@ -93,10 +105,10 @@ abstract class Post_Object {
 	/**
 	 * Check if some property exists
 	 *
-	 * @param string $key The name of the checked property
+	 * @param string $key The name of the checked property.
 	 * @return bool
 	 */
-	public function __isset( string $key ) : bool {
+	public function __isset( string $key ): bool {
 		return metadata_exists( 'post', $this->post->ID, $key );
 	}
 
@@ -105,7 +117,7 @@ abstract class Post_Object {
 	 *
 	 * @return array PostObject debug info
 	 */
-	public function __debugInfo() : array {
+	public function __debugInfo(): array {
 		$debug_object = array();
 		foreach ( get_object_vars( $this ) as $key => $val ) {
 			$debug_object[ $key ] = $val;
@@ -121,38 +133,38 @@ abstract class Post_Object {
 	 *
 	 * @return \WP_Post The post object that we're working with
 	 */
-	public function get_post() : \WP_Post {
+	public function get_post(): \WP_Post {
 		return $this->post;
 	}
 
 	/**
 	 * Get a given property as an array
 	 *
-	 * @param string $key The meta_key to get
+	 * @param string $key The meta_key to get.
 	 * @return array The meta value
 	 */
-	public function get_multiple( string $key ) : array {
+	public function get_multiple( string $key ): array {
 		return get_post_meta( $this->post->ID, $key, false );
 	}
 
 	/**
 	 * Get a given property as a string
 	 *
-	 * @param  string $key The meta_key value we're trying to get
+	 * @param  string $key The meta_key value we're trying to get.
 	 * @return string The meta value
 	 */
-	public function get_single( string $key ) : string {
+	public function get_single( string $key ): string {
 		return get_post_meta( $this->post->ID, $key, true );
 	}
 
 	/**
 	 * Get the post thumbnail for the current entry
 	 *
-	 * @param  string $size The image size name
-	 * @param  array  $attr Attributes used on the HTML image element
+	 * @param  string $size The image size name.
+	 * @param  array  $attr Attributes used on the HTML image element.
 	 * @return string Post thumbnail HTML
 	 */
-	public function get_thumbnail( string $size = 'post-thumbnail', array $attr = array() ) : string {
+	public function get_thumbnail( string $size = 'post-thumbnail', array $attr = array() ): string {
 		return get_the_post_thumbnail( $this->post->ID, $size, $attr );
 	}
 }

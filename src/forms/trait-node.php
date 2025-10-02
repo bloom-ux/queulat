@@ -24,7 +24,7 @@ trait Node_Trait {
 	 * @return Node_Interface       The appended child
 	 * @suppress PhanTypeMismatchReturn
 	 */
-	public function append_child( Node_Interface $node ) : Node_Interface {
+	public function append_child( Node_Interface $node ): Node_Interface {
 		$children   = $this->get_children();
 		$children[] = $node;
 		return $node;
@@ -37,7 +37,7 @@ trait Node_Trait {
 	 * @return Node_Interface Reference to the same element
 	 * @suppress PhanTypeMismatchReturn
 	 */
-	public function append_children( $nodes ) : Node_Interface {
+	public function append_children( $nodes ): Node_Interface {
 		foreach ( $nodes as $node ) {
 			$this->append_child( $node );
 		}
@@ -50,7 +50,7 @@ trait Node_Trait {
 	 * @param  Node_Interface $node The node object to be removed
 	 * @return Node_Interface       The removed node
 	 */
-	public function remove_child( Node_Interface $node ) : Node_Interface {
+	public function remove_child( Node_Interface $node ): Node_Interface {
 		$this->get_children();
 		foreach ( $this->children as $key => $child ) {
 			if ( $node == $child ) {
@@ -67,7 +67,7 @@ trait Node_Trait {
 	 * @param  Node_Interface $reference_node The reference node
 	 * @return Node_Interface                 The new inserted node
 	 */
-	public function insert_before( Node_Interface $new_node, Node_Interface $reference_node ) : Node_Interface {
+	public function insert_before( Node_Interface $new_node, Node_Interface $reference_node ): Node_Interface {
 		$this->get_children();
 		$children_array     = $this->children->getArrayCopy();
 		$reference_position = array_search( $reference_node, $children_array );
@@ -85,7 +85,7 @@ trait Node_Trait {
 	 * @param  Node_Interface $old_child The reference node
 	 * @return Node_Interface            The replaced node
 	 */
-	public function replace_child( Node_Interface $new_child, Node_Interface $old_child ) : Node_Interface {
+	public function replace_child( Node_Interface $new_child, Node_Interface $old_child ): Node_Interface {
 		$this->get_children();
 		$children_array                        = $this->children->getArrayCopy();
 		$old_child_position                    = array_search( $old_child, $children_array );
@@ -99,7 +99,7 @@ trait Node_Trait {
 	 *
 	 * @return Node_List_Interface Child elements
 	 */
-	public function get_children() : Node_List_Interface {
+	public function get_children(): Node_List_Interface {
 		if ( $this->children instanceof Node_List_Interface ) {
 			return $this->children;
 		}
@@ -114,7 +114,7 @@ trait Node_Trait {
 	 * @return Node_Interface The current node
 	 * @suppress PhanTypeMismatchReturn
 	 */
-	public function set_text_content( string $text ) : Node_Interface {
+	public function set_text_content( string $text ): Node_Interface {
 		$this->children     = null;
 		$this->text_content = $text;
 		return $this;
@@ -125,7 +125,7 @@ trait Node_Trait {
 	 *
 	 * @return string Textual content of the node
 	 */
-	public function get_text_content() : string {
+	public function get_text_content(): string {
 		return $this->text_content;
 	}
 }

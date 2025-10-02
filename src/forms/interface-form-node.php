@@ -16,7 +16,7 @@ interface Form_Node_Interface {
 	 * @param  mixed $value  Node value
 	 * @return Node_Interface        Reference to the same object
 	 */
-	public function set_value( $value ) : Node_Interface;
+	public function set_value( $value ): Node_Interface;
 
 	/**
 	 * Get the node value on a given form
@@ -31,14 +31,14 @@ interface Form_Node_Interface {
 	 * @param  string $label ELement label
 	 * @return Node_Interface        Reference to the same object
 	 */
-	public function set_label( string $label ) : Node_Interface;
+	public function set_label( string $label ): Node_Interface;
 
 	/**
 	 * Get the label for the form element
 	 *
 	 * @return string Element label
 	 */
-	public function get_label() : string;
+	public function get_label(): string;
 
 	/**
 	 * Set the name which will be used to submit the form element
@@ -46,12 +46,12 @@ interface Form_Node_Interface {
 	 * @param  string $name Name attribute for the element
 	 * @return Node_Interface       Reference to the same object
 	 */
-	public function set_name( string $name ) : Node_Interface;
+	public function set_name( string $name ): Node_Interface;
 
 	/**
 	 * Get the form element name attribute
 	 *
 	 * @return string Value of the name attribute for the node
 	 */
-	public function get_name() : string;
+	public function get_name(): string;
 }

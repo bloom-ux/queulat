@@ -13,6 +13,5 @@ interface Element_Interface extends Node_Interface, Attributes_Interface {
 	 *
 	 * @return string Tag name of the element
 	 */
-	public function get_tag_name() : string;
-
+	public function get_tag_name(): string;
 }

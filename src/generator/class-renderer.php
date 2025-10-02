@@ -2,6 +2,15 @@
 
 namespace Queulat\Generator;
 
+/**
+ * Renderer utility class.
+ *
+ * Provides static methods for rendering PHP code arrays and formatting output.
+ * Used primarily for generating PHP code from data structures.
+ *
+ * @package Queulat
+ * @since   0.1.0
+ */
 class Renderer {
 
 	/**
@@ -10,7 +19,7 @@ class Renderer {
 	 * @param array $keys_arr An array of keys
 	 * @return integer        The length of the longest key
 	 */
-	public static function get_longest_key_length( array $keys_arr ) : int {
+	public static function get_longest_key_length( array $keys_arr ): int {
 		$longest_key = 0;
 		foreach ( $keys_arr as $key ) {
 			if ( strlen( $key ) > $longest_key ) {
@@ -30,7 +39,7 @@ class Renderer {
 	 * @param string     $textdomain        The localization textdomain to use
 	 * @return string                   A single line of the array output
 	 */
-	public static function render_array_member( $key, $val, int $pad_key_to = 0, bool $localize_strings = true, string $textdomain = '' ) : string {
+	public static function render_array_member( $key, $val, int $pad_key_to = 0, bool $localize_strings = true, string $textdomain = '' ): string {
 		$padding = $pad_key_to - strlen( $key ) > 0 ? str_repeat( ' ', $pad_key_to - strlen( $key ) ) : '';
 		$key     = is_int( $key ) ? $key : "'$key'";
 		if ( is_string( $val ) ) {
@@ -73,7 +82,7 @@ class Renderer {
 	 * @param integer $tabs The amount of tabs to prepend
 	 * @return string       Tabbed text
 	 */
-	public static function ident( string $text, int $tabs = 1 ) : string {
+	public static function ident( string $text, int $tabs = 1 ): string {
 		$tabs = str_repeat( "\t", $tabs );
 		return preg_replace( '/^(.*)/m', $tabs . '$1', $text );
 	}

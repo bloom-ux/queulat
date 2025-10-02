@@ -6,14 +6,14 @@ use Queulat\Forms\Form_Component;
 
 class WP_Editor extends Form_Component {
 	public function get_default_properties() {
-		return [
+		return array(
 			'wpautop'       => true,
 			'media_buttons' => true,
 			'teeny'         => false,
 			'dfw'           => false,
 			'tinymce'       => true,
 			'quicktags'     => true,
-		];
+		);
 	}
 
 	private function sanitize_id() {
@@ -97,5 +97,4 @@ class WP_Editor extends Form_Component {
 		);
 		return ob_get_clean();
 	}
-
 }
