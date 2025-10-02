@@ -54,7 +54,7 @@ class Bootstrap {
 	public function enqueue_assets() {
 		static $asset_versions;
 		$versions_path  = __DIR__ . '/../../dist/manifest.json';
-		$asset_versions = json_decode( file_get_contents( $versions_path ) );
+		$asset_versions = wp_json_file_decode( $versions_path );
 		wp_enqueue_style( 'queulat-forms', plugins_url( '..' . $asset_versions->{'dist/admin.css'}, __DIR__ ), array(), null, 'all' );
 	}
 	/**
