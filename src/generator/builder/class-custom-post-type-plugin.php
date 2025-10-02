@@ -1,4 +1,9 @@
 <?php
+/**
+ * Generate a Custom Post Type plugin
+ *
+ * @package Queulat
+ */
 
 namespace Queulat\Generator\Builder;
 
@@ -6,8 +11,12 @@ use WP_Post_Type;
 use Twig\Environment;
 use Queulat\Helpers\Strings;
 use Queulat\Generator\Renderer;
+use stdClass;
 use Twig\Loader\FilesystemLoader;
 
+/**
+ * Generate a Custom Post Type plugin
+ */
 class Custom_Post_Type_Plugin {
 
 	/**
@@ -27,14 +36,44 @@ class Custom_Post_Type_Plugin {
 	/**
 	 * Build a new Custom Post Type plugin builder
 	 *
-	 * @param string $slug The post type slug
-	 * @param array  $args  Post type arguments
-	 * @see https://codex.wordpress.org/register_post_type#Arguments
+	 * @param string $slug The post type slug.
+	 * @param array  $args  Post type arguments.
+	 * @see https://developer.wordpress.org/reference/functions/register_post_type/#Arguments
 	 */
-	public function __construct( string $slug, array $args ) {
+	public function __construct( string $slug, array $args = array() ) {
 		$this->raw_slug     = $slug;
 		$sanitized_slug     = sanitize_key( $slug );
 		$this->wp_post_type = new WP_Post_Type( $sanitized_slug, $args );
+		if ( empty( $args['labels'] ) ) {
+			$this->wp_post_type->labels = $this->generate_labels( $args );
+		}
+		if ( empty( $args['label'] ) && ! empty( $args['plural'] ) ) {
+			$this->wp_post_type->label = $args['plural'];
+		}
+	}
+
+	/**
+	 * Generate custom labels for the post type
+	 *
+	 * @param array $args Post type parameters.
+	 * @return stdClass Custom labels
+	 *
+	 * phpcs:disable WordPress.WP.I18n.NonSingularStringLiteralText,WordPress.WP.I18n.MissingArgDomain
+	 */
+	private function generate_labels( array $args = array() ): stdClass {
+		$default_labels   = get_post_type_labels( $this->wp_post_type );
+		$default_singular = __( $this->wp_post_type->labels->singular_name );
+		$default_plural   = __( $this->wp_post_type->labels->name );
+		$custom_singular  = sanitize_text_field( $args['singular'] );
+		$custom_plural    = sanitize_text_field( $args['plural'] );
+		$custom_labels    = (object) array();
+		foreach ( $default_labels as $key => $label ) {
+			$label               = __( $label );
+			$new_label           = stripos( (string) $label, $default_plural ) === false ? str_ireplace( $default_singular, $custom_singular, (string) $label ) : str_ireplace( $default_plural, $custom_plural, (string) $label );
+			$custom_labels->$key = $new_label;
+		}
+		$custom_labels->name_admin_bar = $custom_singular;
+		return $custom_labels;
 	}
 
 	/**
@@ -47,7 +86,7 @@ class Custom_Post_Type_Plugin {
 		$longest_key                    = Renderer::get_longest_key_length( array_keys( $object_vars ) );
 		$object_vars['capability_type'] = array(
 			$this->wp_post_type->name,
-			Strings::plural( $this->wp_post_type->name ),
+			sanitize_key( Strings::plural( $this->wp_post_type->name ) ),
 		);
 		$properties                     = '';
 		$localize                       = array(
@@ -56,13 +95,13 @@ class Custom_Post_Type_Plugin {
 			'description',
 		);
 		foreach ( $object_vars as $key => $val ) {
-			// internal properties
-			if ( strpos( $key, '_' ) === 0 || $key == 'name' || $key == 'cap' ) {
+			// internal properties.
+			if ( strpos( $key, '_' ) === 0 || 'name' === $key || 'cap' === $key ) {
 				continue;
 			}
-			$properties .= Renderer::render_array_member( $key, $val, $longest_key, in_array( $key, $localize ), "cpt_{$this->wp_post_type->name}" );
+			$properties .= Renderer::render_array_member( $key, $val, $longest_key, in_array( $key, $localize, true ), "cpt_{$this->wp_post_type->name}" );
 		}
-		return rtrim( $properties, "\n," );
+		return $properties;
 	}
 
 	/**
@@ -94,12 +133,15 @@ class Custom_Post_Type_Plugin {
 		);
 	}
 
+	/**
+	 * Generate the plugin files
+	 */
 	public function build() {
 		$template_vars = $this->get_template_vars();
 
-		// replace "stub" in stub file names with the file name
+		// replace "stub" in stub file names with the file name.
 		$stub   = $template_vars['file_name'];
-		$prefix = apply_filters( 'quelat_generate_builder_ctp_plugin', 'queulat-' );
+		$prefix = apply_filters( 'queulat_generate_builder_ctp_plugin', 'queulat-' );
 
 		$loader       = new FilesystemLoader( __DIR__ . '/../stubs' );
 		$twig         = new Environment( $loader, array() );
@@ -129,8 +171,13 @@ class Custom_Post_Type_Plugin {
 		$plugin_dir = "{$prefix}{$template_vars['file_name']}-cpt-plugin";
 
 		$wp_filesystem->mkdir( WP_PLUGIN_DIR . "/{$plugin_dir}" );
+		$wp_filesystem->mkdir( WP_PLUGIN_DIR . "/{$plugin_dir}/src" );
 		foreach ( $output_files as $filename => $contents ) {
-			$wp_filesystem->put_contents( WP_PLUGIN_DIR . "/{$plugin_dir}/{$filename}", $contents );
+			if ( str_starts_with( $filename, 'class-' ) ) {
+				$wp_filesystem->put_contents( WP_PLUGIN_DIR . "/{$plugin_dir}/src/{$filename}", $contents );
+			} else {
+				$wp_filesystem->put_contents( WP_PLUGIN_DIR . "/{$plugin_dir}/{$filename}", $contents );
+			}
 		}
 
 		return true;

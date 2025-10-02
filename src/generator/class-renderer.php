@@ -43,7 +43,7 @@ class Renderer {
 		$padding = $pad_key_to - strlen( $key ) > 0 ? str_repeat( ' ', $pad_key_to - strlen( $key ) ) : '';
 		$key     = is_int( $key ) ? $key : "'$key'";
 		if ( is_string( $val ) ) {
-			$val = $localize_strings && $textdomain ? "__('{$val}', '$textdomain')" : "'{$val}'";
+			$val = $localize_strings && $textdomain ? "__( '{$val}', '$textdomain' )" : "'{$val}'";
 			return "{$key} {$padding}=> {$val},\n";
 		} elseif ( is_int( $val ) || is_float( $val ) ) {
 			return "{$key} {$padding}=> {$val},\n";
@@ -54,23 +54,23 @@ class Renderer {
 			return "{$key} {$padding}=> null,\n";
 		} elseif ( is_array( $val ) ) {
 			if ( empty( $val ) ) {
-				return "{$key} {$padding}=> [],\n";
+				return "{$key} {$padding}=> array(),\n";
 			}
-			$buffer      = "{$key} {$padding}=> [\n";
+			$buffer      = "{$key} {$padding}=> array(\n";
 			$longest_key = static::get_longest_key_length( array_keys( $val ) );
 			foreach ( $val as $val_key => $val_value ) {
 				$buffer .= "\t" . static::render_array_member( $val_key, $val_value, $longest_key, $localize_strings, $textdomain );
 			}
-			$buffer .= "],\n";
+			$buffer .= "),\n";
 			return $buffer;
 		} elseif ( is_object( $val ) ) {
-			$buffer      = "{$key} {$padding}=> [\n";
+			$buffer      = "{$key} {$padding}=> array(\n";
 			$object_vars = get_object_vars( $val );
 			$longest_key = static::get_longest_key_length( array_keys( $object_vars ) );
 			foreach ( $object_vars as $val_key => $val_value ) {
 				$buffer .= "\t" . static::render_array_member( $val_key, $val_value, $longest_key, $localize_strings, $textdomain );
 			}
-			$buffer .= "],\n";
+			$buffer .= "),\n";
 			return $buffer;
 		}
 	}

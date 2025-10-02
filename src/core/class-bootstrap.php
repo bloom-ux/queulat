@@ -13,6 +13,7 @@ namespace Queulat;
 
 use Queulat\Forms\Node_Factory;
 use Queulat\Forms\Node_Factory_Argument_Handler;
+use Queulat\Generator\CLI\CPT_Plugin_Command;
 
 /**
  * Hook Queulat into WordPress
@@ -24,14 +25,14 @@ class Bootstrap {
 	 * Sets up action hooks for admin initialization, asset enqueuing,
 	 * and registers default node factory arguments.
 	 *
-	 * @since 0.1.0
 	 * @return void
 	 */
 	public function init() {
 		add_action( 'muplugins_loaded', array( $this, 'init_generator_admin' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ), 9999 );
 		$this->register_default_node_factory_args();
-		load_muplugin_textdomain( 'queulat', str_replace( WPMU_PLUGIN_DIR, '', __DIR__ ) . '/../../languages' );
+		$this->init_cli_commands();
+		add_action( 'init', array( $this, 'load_translations' ) );
 	}
 
 	/**
@@ -41,6 +42,27 @@ class Bootstrap {
 	 */
 	public function init_generator_admin() {
 		( new Generator\Admin\CPT_Plugin() )->init();
+	}
+
+	/**
+	 * Initialize wp-cli commands
+	 *
+	 * @return void
+	 */
+	public function init_cli_commands() {
+		if ( ! is_callable( array( '\WP_CLI', 'add_command' ) ) ) {
+			return;
+		}
+		CPT_Plugin_Command::init();
+	}
+
+	/**
+	 * Load Queulat translations
+	 *
+	 * @return void
+	 */
+	public function load_translations() {
+		load_muplugin_textdomain( 'queulat', str_replace( WPMU_PLUGIN_DIR, '', __DIR__ ) . '/../../languages' );
 	}
 
 	/**
@@ -57,6 +79,7 @@ class Bootstrap {
 		$asset_versions = wp_json_file_decode( $versions_path );
 		wp_enqueue_style( 'queulat-forms', plugins_url( '..' . $asset_versions->{'dist/admin.css'}, __DIR__ ), array(), null, 'all' );
 	}
+
 	/**
 	 * Register default argument handlers for the node factory.
 	 *
