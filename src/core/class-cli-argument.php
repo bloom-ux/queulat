@@ -7,7 +7,7 @@
 
 namespace Queulat;
 
-use Queulat\Contracts\CLI_Argument as CLI_Argument_Contract;
+use Queulat\Contracts\CLI_Argument_Interface as CLI_Argument_Contract;
 
 /**
  * Command line argument

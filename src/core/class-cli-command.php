@@ -7,8 +7,8 @@
 
 namespace Queulat;
 
-use Queulat\Contracts\CLI_Argument;
-use Queulat\Contracts\CLI_Command as CLI_Command_Contract;
+use Queulat\Contracts\CLI_Argument_Interface;
+use Queulat\Contracts\CLI_Command_Interface as CLI_Command_Contract;
 
 /**
  * Abstract class for creating WP-CLI commands
@@ -18,7 +18,7 @@ abstract class CLI_Command implements CLI_Command_Contract {
 	/**
 	 * Return the arguments for the command
 	 *
-	 * @return null|array|CLI_Argument[]|JsonSerializable[] Zero or more arguments
+	 * @return null|array|CLI_Argument_Interface[]|JsonSerializable[] Zero or more arguments
 	 */
 	abstract public function get_command_arguments(): ?array;
 
@@ -68,7 +68,7 @@ abstract class CLI_Command implements CLI_Command_Contract {
 	/**
 	 * Get the command arguments
 	 *
-	 * @return array|CLI_Argument[] Zero or more arguments.
+	 * @return array|CLI_Argument_Interface[] Zero or more arguments.
 	 */
 	public function get_synopsis(): array {
 		$args = $this->get_command_arguments();
