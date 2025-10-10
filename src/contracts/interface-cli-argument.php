@@ -13,7 +13,7 @@ use Queulat\CLI_Argument_Types;
 /**
  * Contract for CLI argument objects
  */
-interface CLI_Argument extends JsonSerializable {
+interface CLI_Argument_Interface extends JsonSerializable {
 
 	/**
 	 * Get the type of the argument.

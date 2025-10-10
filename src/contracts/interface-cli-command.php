@@ -10,7 +10,7 @@ namespace Queulat\Contracts;
 /**
  * Contract for creating WP-CLI commands
  */
-interface CLI_Command {
+interface CLI_Command_Interface {
 
 	/**
 	 * Get name of the command. Should use namespacing
