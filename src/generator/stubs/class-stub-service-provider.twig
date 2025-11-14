@@ -1,0 +1,22 @@
+<?php
+declare(strict_types=1);
+
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+
+class {{ class_name }}_Service_Provider {
+
+	public function register( ContainerBuilder $container ): void {
+		$container
+			->register( '{{ file_name }}.post_type', {{ class_name }}_Post_Type::class )
+			->setPublic( true )
+			->addMethodCall( 'init' );
+
+		$container
+			->register( '{{ file_name }}.post_query', {{ class_name }}_Post_Query::class )
+			->setPublic( true );
+
+		$container
+			->register( '{{ file_name }}.post_object', {{ class_name }}_Post_Object::class )
+			->setPublic( true );
+	}
+}

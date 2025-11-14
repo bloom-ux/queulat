@@ -9,15 +9,44 @@
  * @since   0.1.0
  */
 
+declare(strict_types=1);
+
 namespace Queulat;
 
-use Queulat\Forms\Node_Factory;
-use Queulat\Forms\Node_Factory_Argument_Handler;
+use Queulat\Contracts\CLI_Command_Interface;
+use Queulat\Helpers\Container_Factory;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * Hook Queulat into WordPress
  */
 class Bootstrap {
+
+	/**
+	 * Service container instance.
+	 *
+	 * @var ContainerBuilder
+	 */
+	private $container;
+
+	/**
+	 * Whether the container has been booted.
+	 *
+	 * @var bool
+	 */
+	private $container_booted = false;
+
+	/**
+	 * Initialize the bootstrapper.
+	 *
+	 * @param null|ContainerBuilder $container Optional pre-configured container.
+	 */
+	public function __construct( ?ContainerBuilder $container = null ) {
+		if ( $container instanceof ContainerBuilder ) {
+			$this->container        = $container;
+			$this->container_booted = true;
+		}
+	}
 	/**
 	 * Initialize the plugin functionality.
 	 *
@@ -27,10 +56,29 @@ class Bootstrap {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'muplugins_loaded', array( $this, 'init_generator_admin' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ), 9999 );
-		$this->register_default_node_factory_args();
+		add_action( 'plugins_loaded', array( $this, 'boot_container' ), 90 );
+		add_action( 'plugins_loaded', array( $this, 'init_generator_admin' ), 100 );
+		add_action( 'plugins_loaded', array( $this, 'init_cli_commands' ), 100 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ), 90 );
 		add_action( 'init', array( $this, 'load_translations' ) );
+	}
+
+	/**
+	 * Retrieve the service container.
+	 *
+	 * @return ContainerBuilder
+	 */
+	public function get_container(): ContainerBuilder {
+		return $this->ensure_container();
+	}
+
+	/**
+	 * Boot the service container during the plugins_loaded hook.
+	 *
+	 * @return void
+	 */
+	public function boot_container(): void {
+		$this->ensure_container();
 	}
 
 	/**
@@ -39,7 +87,54 @@ class Bootstrap {
 	 * @return void
 	 */
 	public function init_generator_admin() {
-		( new Generator\Admin\CPT_Plugin() )->init();
+		$container = $this->ensure_container();
+
+		if ( ! $container->has( 'queulat.generator.admin.cpt' ) ) {
+			return;
+		}
+
+		$admin = $container->get( 'queulat.generator.admin.cpt' );
+
+		if ( method_exists( $admin, 'init' ) ) {
+			$admin->init();
+		}
+	}
+
+	/**
+	 * Initialize wp-cli commands
+	 *
+	 * @return void
+	 */
+	public function init_cli_commands() {
+		if ( ! is_callable( array( '\WP_CLI', 'add_command' ) ) ) {
+			return;
+		}
+
+		$container = $this->ensure_container();
+
+		if ( ! $container->hasParameter( 'queulat.generator.cli.commands' ) ) {
+			return;
+		}
+
+		$command_services = (array) $container->getParameter( 'queulat.generator.cli.commands' );
+
+		foreach ( $command_services as $service_id ) {
+			if ( ! $container->has( $service_id ) ) {
+				continue;
+			}
+
+			$command = $container->get( $service_id );
+
+			if ( ! $command instanceof CLI_Command_Interface ) {
+				continue;
+			}
+
+			\WP_CLI::add_command(
+				$command->get_name(),
+				$command->get_callable(),
+				$command->get_args()
+			);
+		}
 	}
 
 	/**
@@ -60,34 +155,30 @@ class Bootstrap {
 	 * @return void
 	 */
 	public function enqueue_assets() {
-		static $asset_versions;
-		$versions_path  = __DIR__ . '/../../dist/manifest.json';
-		$asset_versions = json_decode( file_get_contents( $versions_path ) );
-		wp_enqueue_style( 'queulat-forms', plugins_url( '..' . $asset_versions->{'dist/admin.css'}, __DIR__ ), array(), null, 'all' );
+		$container = $this->ensure_container();
+
+		if ( ! $container->has( 'queulat.assets.loader' ) ) {
+			return;
+		}
+
+		$loader      = $container->get( 'queulat.assets.loader' );
+		$style_entry = $container->hasParameter( 'queulat.assets.styles.default' ) ? $container->getParameter( 'queulat.assets.styles.default' ) : 'dist/admin.css';
+
+		if ( is_callable( array( $loader, 'enqueue_style' ) ) ) {
+			$loader->enqueue_style( $style_entry );
+		}
 	}
 
 	/**
-	 * Register default argument handlers for the node factory.
+	 * Ensure the container is available.
 	 *
-	 * Sets up handlers for common node properties like attributes, label,
-	 * name, options, properties, value, text content, and children.
-	 *
-	 * @since 0.1.0
-	 * @return void
+	 * @return ContainerBuilder
 	 */
-	private function register_default_node_factory_args() {
-		$handlers = array(
-			new Node_Factory_Argument_Handler( 'attributes', 'set_attribute', Node_Factory::CALL_TYPE_KEY_VALUE ),
-			new Node_Factory_Argument_Handler( 'label', 'set_label' ),
-			new Node_Factory_Argument_Handler( 'name', 'set_name' ),
-			new Node_Factory_Argument_Handler( 'options', 'set_options', Node_Factory::CALL_TYPE_VALUE ),
-			new Node_Factory_Argument_Handler( 'properties', 'set_property', Node_Factory::CALL_TYPE_KEY_VALUE ),
-			new Node_Factory_Argument_Handler( 'value', 'set_value' ),
-			new Node_Factory_Argument_Handler( 'text_content', 'set_text_content' ),
-			new Node_Factory_Argument_Handler( 'children', 'append_child', Node_Factory::CALL_TYPE_VALUE_ITEMS ),
-		);
-		foreach ( $handlers as $handler ) {
-			Node_Factory::register_argument( $handler );
+	private function ensure_container(): ContainerBuilder {
+		if ( ! $this->container_booted ) {
+			$this->container        = Container_Factory::build();
+			$this->container_booted = true;
 		}
+		return $this->container;
 	}
 }

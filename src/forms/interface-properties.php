@@ -1,15 +1,17 @@
 <?php
-
-namespace Queulat\Forms;
-
-interface Properties_Interface {
-
 	/**
 	 * Get any property from this element
 	 *
 	 * @param string $key The key name for the property
 	 * @return mixed The property value (most likely an string)
 	 */
+
+declare(strict_types=1);
+
+namespace Queulat\Forms;
+
+interface Properties_Interface {
+
 	public function get_property( string $key );
 
 	/**
@@ -20,14 +22,14 @@ interface Properties_Interface {
 	 * @return Node_Interface        Reference to the same object
 	 * @suppress PhanTypeMismatchReturn*
 	 */
-	public function set_property( string $key, $value ) : Node_Interface;
+	public function set_property( string $key, $value ): Node_Interface;
 
 	/**
 	 * Get the values for all defined properties, indexed by name
 	 *
 	 * @return array Value for all properties
 	 */
-	public function get_properties() : array;
+	public function get_properties(): array;
 
 	/**
 	 * Set element properties (attributes and others)
@@ -35,6 +37,5 @@ interface Properties_Interface {
 	 * @param array $properties Set of properties indexed by name
 	 * @suppress PhanTypeMismatchReturn*
 	 */
-	public function set_properties( array $properties ) : Node_Interface;
-
+	public function set_properties( array $properties ): Node_Interface;
 }

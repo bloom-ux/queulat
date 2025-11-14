@@ -7,15 +7,29 @@
  * implements the abstract methods.
  * Plus, it should call activate_plugin on register_activation_hook
  * and register_post_type on init
+ *
+ * @package Queulat
  */
+
+declare(strict_types=1);
+
 namespace Queulat;
 
+use Queulat\Contracts\Post_Type_Interface;
 use WP_Error;
 use WP_Post_Type;
 
-abstract class Post_Type {
+/**
+ * Abtract class for registering and defining a custom post type.
+ */
+abstract class Post_Type implements Post_Type_Interface {
 
-	protected $instance;
+	/**
+	 * Track whether hooks have already been registered.
+	 *
+	 * @var bool
+	 */
+	protected $initialized = false;
 
 	/**
 	 * Get the post type key.
@@ -26,7 +40,7 @@ abstract class Post_Type {
 	 *
 	 * @return string Post type key
 	 */
-	abstract public function get_post_type() : string;
+	abstract public function get_post_type(): string;
 
 	/**
 	 * Get post type arguments.
@@ -34,7 +48,7 @@ abstract class Post_Type {
 	 * @see register_post_type
 	 * @return array
 	 */
-	abstract public function get_post_type_args() : array;
+	abstract public function get_post_type_args(): array;
 
 	/**
 	 * Get the registered post type object
@@ -42,26 +56,44 @@ abstract class Post_Type {
 	 * @see get_post_type_object
 	 * @return null|WP_Post_Type
 	 */
-	public function get_post_type_object() : ?WP_Post_Type {
+	public function get_post_type_object(): ?WP_Post_Type {
 		return get_post_type_object( $this->get_post_type() );
+	}
+
+	/**
+	 * Register actions and filters required by the post type.
+	 *
+	 * Call this method once during plugin bootstrap to wire the post type into
+	 * WordPress' lifecycle.
+	 *
+	 * @return void
+	 */
+	public function init(): void {
+		if ( $this->initialized ) {
+			return;
+		}
+		add_action( 'init', array( $this, 'register' ) );
+		add_action( 'wp_initialize_site', array( static::class, 'init_for_site' ), 200, 1 );
+		$this->initialized = true;
 	}
 
 	/**
 	 * Handle custom post type registration
 	 *
-	 * This method it's executed on the "init" hook and calls
-	 * register_post_type() with the params defined on static::get_post_type_args()
+	 * @return \WP_Post_Type|\WP_Error True if the post type was correctly registered, WP_Error otherwise
+	 */
+	public function register() {
+		return register_post_type( $this->get_post_type(), $this->get_post_type_args() );
+	}
+
+	/**
+	 * Backwards-compatible static wrapper for register().
 	 *
-	 * @return \WP_Post_Type|\WP_Error True if the post type was correctly registered, WP_Error otherwhise
+	 * @return \WP_Post_Type|\WP_Error
 	 */
 	public static function register_post_type() {
-		$class     = get_called_class();
-		$post_type = new $class();
-
-		add_action( 'wp_initialize_site', array( static::class, 'init_for_site' ), 200 );
-
-		// Try to register the post type. Further validations are handled by WordPress
-		return register_post_type( $post_type->get_post_type(), $post_type->get_post_type_args() );
+		$post_type = new static();
+		return $post_type->register();
 	}
 
 	/**
@@ -71,10 +103,10 @@ abstract class Post_Type {
 	 * It will add all capabilities for the administrator role and
 	 * flush rewrite rules so permalinks can work correctly
 	 *
-	 * @param bool $network_wide True if it is a network-wide activation
+	 * @param bool $network_wide True if it is a network-wide activation.
 	 */
 	public static function activate_plugin( $network_wide = false ) {
-		// Activate for each site, if required
+		// Activate for each site, if required.
 		if ( function_exists( 'is_multisite' ) && is_multisite() && $network_wide ) {
 			$blogs = get_sites();
 			foreach ( $blogs as $blog ) {
@@ -104,24 +136,26 @@ abstract class Post_Type {
 
 	/**
 	 * Activate plugin for the current blog
+	 *
 	 * @return WP_Error|true True if successful; WP_Error otherwhise
 	 */
 	private static function activate_for_blog() {
 		$admin = get_role( 'administrator' );
 		$class = get_called_class();
 
-		// init post type, to include new slug on rewrite flush (if necessary)
-		// this will also test if the post type key it's a reserved word and fail accordingly
-		$can_register = $class::register_post_type();
+		// init post type, to include new slug on rewrite flush (if necessary).
+		// this will also test if the post type key it's a reserved word and fail accordingly.
+		$instance     = new $class();
+		$can_register = $instance->register();
 		if ( is_wp_error( $can_register ) ) {
-			wp_die( $can_register->get_message() );
+			wp_die( esc_html( $can_register->get_message() ) );
 		}
 
-		// instantiate the post type object to get the registartion arguments
-		$post_type      = new $class();
-		$post_type_args = (object) $post_type->get_post_type_args();
+		// instantiate the post type object to get the registartion arguments.
+		$post_type      = $instance;
+		$post_type_args = (object) $instance->get_post_type_args();
 
-		// the capabilities property must be set as an array (it can be empty)
+		// the capabilities property must be set as an array (it can be empty).
 		if ( ! isset( $post_type_args->capabilities ) ) {
 			$post_type_args->capabilities = array();
 		} elseif ( ! is_array( $post_type_args->capabilities ) ) {
@@ -129,12 +163,19 @@ abstract class Post_Type {
 		}
 
 		if ( empty( $post_type_args->capabilities ) && ( empty( $post_type_args->capability_type ) || ! isset( $post_type_args->map_meta_cap ) || ! (bool) $post_type_args->map_meta_cap ) ) {
-			return new \WP_Error( 'queulat_post_type_undefined_capabilities', sprintf( __( 'You must define %s capabilities or use map_meta_cap and define capability_type', 'queulat' ), $class ) );
+			return new \WP_Error(
+				'queulat_post_type_undefined_capabilities',
+				sprintf(
+					/* translators: %s name of the PHP class that was invoked */
+					__( 'You must define %s capabilities or use map_meta_cap and define capability_type', 'queulat' ),
+					$class
+				)
+			);
 		}
 
 		$capabilities = get_post_type_capabilities( $post_type_args );
 
-		// add capabilities to the administrator role
+		// add capabilities to the administrator role.
 		foreach ( $capabilities as $key => $val ) {
 			$admin->add_cap( $val );
 		}
@@ -148,7 +189,7 @@ abstract class Post_Type {
 		 */
 		do_action( "queulat_post_type_{$post_type->get_post_type()}_activation", $post_type );
 
-		// regenerate permalinks structure
+		// regenerate permalinks structure.
 		flush_rewrite_rules();
 
 		return true;

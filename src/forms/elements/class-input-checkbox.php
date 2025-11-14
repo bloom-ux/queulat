@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Queulat\Forms\Element;
 
@@ -10,14 +11,15 @@ use Queulat\Helpers\Arrays;
 class Input_Checkbox extends Input implements Option_Node_Interface {
 	protected $value;
 	use Options_Trait;
-	public function set_value( $value ) : Node_Interface {
+
+	public function set_value( $value ): Node_Interface {
 		$this->value = $value;
 		return $this;
 	}
 	public function get_value() {
 		return $this->value;
 	}
-	public function __toString() : string {
+	public function __toString(): string {
 		$options = $this->get_options();
 		if ( ! Arrays::is_associative( $options ) ) {
 			$options = array_combine( (array) $options, (array) $options );

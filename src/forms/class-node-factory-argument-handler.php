@@ -1,33 +1,33 @@
 <?php
-
-namespace Queulat\Forms;
-
 /**
  * Describes how to handle an argument on the Node_Factory
  */
+
+declare(strict_types=1);
+
+namespace Queulat\Forms;
+
 class Node_Factory_Argument_Handler {
 	private $argument  = '';
 	private $method    = '';
-	private $call_type = Node_Factory::CALL_TYPE_DEFAULT;
+	private Node_Factory_Call_Type $call_type;
 
 	/**
 	 * Build a new handler
 	 *
 	 * @param string $argument  The name of the argument key to be handled
 	 * @param string $method    The name of the method that will be called on the object
-	 * @param string $call_type How to handle array values on the argument
-	 */
-	public function __construct( string $argument = '', string $method = '', string $call_type = Node_Factory::CALL_TYPE_DEFAULT ) {
-		if ( ! empty( $argument ) ) {
-			$this->set_argument( $argument );
-		}
-		if ( ! empty( $method ) ) {
-			$this->set_method( $method );
-		}
-		if ( ! empty( $call_type ) ) {
-			$this->set_call_type( $call_type );
-		}
-	}
+	 * @param Node_Factory_Call_Type $call_type How to handle array values on the argument
+ */
+    public function __construct( string $argument = '', string $method = '', Node_Factory_Call_Type $call_type = Node_Factory_Call_Type::VALUE ) {
+        $this->call_type = $call_type;
+        if ( ! empty( $argument ) ) {
+            $this->set_argument( $argument );
+        }
+        if ( ! empty( $method ) ) {
+            $this->set_method( $method );
+        }
+    }
 
 	/**
 	 * Set the name of the argument that this class defines how to handle
@@ -35,7 +35,7 @@ class Node_Factory_Argument_Handler {
 	 * @param string $argument The argument key used on the Factory
 	 * @return Node_Factory_Argument_Handler Reference to this
 	 */
-	public function set_argument( string $argument ) : Node_Factory_Argument_Handler {
+	public function set_argument( string $argument ): Node_Factory_Argument_Handler {
 		$this->argument = $argument;
 		return $this;
 	}
@@ -46,7 +46,7 @@ class Node_Factory_Argument_Handler {
 	 * @param string $method Name of the method
 	 * @return Node_Factory_Argument_Handler
 	 */
-	public function set_method( string $method ) : Node_Factory_Argument_Handler {
+	public function set_method( string $method ): Node_Factory_Argument_Handler {
 		$this->method = $method;
 		return $this;
 	}
@@ -54,14 +54,14 @@ class Node_Factory_Argument_Handler {
 	/**
 	 * Define how to handle array values on the argument.
 	 *
-	 * @param string $call_type The type of call
+	 * @param Node_Factory_Call_Type $call_type The type of call
 	 * @see    Node_Factory
 	 * @return Node_Factory_Argument_Handler
-	 */
-	public function set_call_type( string $call_type ) : Node_Factory_Argument_Handler {
-		$this->call_type = $call_type;
-		return $this;
-	}
+ */
+    public function set_call_type( Node_Factory_Call_Type $call_type ): Node_Factory_Argument_Handler {
+        $this->call_type = $call_type;
+        return $this;
+    }
 
 	/**
 	 * Check if the property is set on this object

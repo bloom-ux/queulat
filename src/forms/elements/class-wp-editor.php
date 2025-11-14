@@ -1,4 +1,13 @@
 <?php
+	/**
+	 * Output WordPress tinymce editor.
+	 *
+	 * If the field is shown on a post type that uses the block editor, the field will be shown as a preview with an edit button.
+	 *
+	 * @return string Tinymce editor
+	 */
+
+declare(strict_types=1);
 
 namespace Queulat\Forms\Element;
 
@@ -6,14 +15,14 @@ use Queulat\Forms\Form_Component;
 
 class WP_Editor extends Form_Component {
 	public function get_default_properties() {
-		return [
+		return array(
 			'wpautop'       => true,
 			'media_buttons' => true,
 			'teeny'         => false,
 			'dfw'           => false,
 			'tinymce'       => true,
 			'quicktags'     => true,
-		];
+		);
 	}
 
 	private function sanitize_id() {
@@ -22,13 +31,6 @@ class WP_Editor extends Form_Component {
 		return strtolower( $id );
 	}
 
-	/**
-	 * Output WordPress tinymce editor.
-	 *
-	 * If the field is shown on a post type that uses the block editor, the field will be shown as a preview with an edit button.
-	 *
-	 * @return string Tinymce editor
-	 */
 	public function __toString() {
 		if ( ! is_admin() ) {
 			return $this->good_old_editor();
@@ -97,5 +99,4 @@ class WP_Editor extends Form_Component {
 		);
 		return ob_get_clean();
 	}
-
 }

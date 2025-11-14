@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Queulat\Validator;
 
@@ -21,7 +22,7 @@ class Is_Boolean implements Validator_Interface {
 		$this->allow_empty = (bool) $allow_empty;
 	}
 
-	public function is_valid( $value ) : bool {
+	public function is_valid( $value ): bool {
 		$value = (string) trim( $value );
 		if ( $this->allow_empty ) {
 			return ( in_array( $value, static::$allowed_values, true ) || empty( $value ) ) ? true : false;
@@ -30,8 +31,7 @@ class Is_Boolean implements Validator_Interface {
 		}
 	}
 
-	public function get_message() : string {
+	public function get_message(): string {
 		return __( 'The value for this field should be of a true/false type', 'queulat' );
 	}
-
 }

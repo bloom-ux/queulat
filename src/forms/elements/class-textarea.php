@@ -1,4 +1,12 @@
 <?php
+	/**
+	 * Allowed element attributes
+	 *
+	 * @var array
+	 * @link http://www.w3.org/TR/html5/forms.html#the-textarea-element
+	 */
+
+declare(strict_types=1);
 
 namespace Queulat\Forms\Element;
 
@@ -9,14 +17,8 @@ use Queulat\Forms\Node_Interface;
 
 class Textarea extends Forms\HTML_Form_Element {
 
-	/**
-	 * Allowed element attributes
-	 *
-	 * @var array
-	 * @link http://www.w3.org/TR/html5/forms.html#the-textarea-element
-	 */
 	public static function get_element_attributes(): array {
-		return [
+		return array(
 			'autocomplete',
 			'autofocus',
 			'cols',
@@ -32,22 +34,22 @@ class Textarea extends Forms\HTML_Form_Element {
 			'required',
 			'rows',
 			'wrap',
-		];
+		);
 	}
 
-	public function get_tag_name() : string {
+	public function get_tag_name(): string {
 		return 'textarea';
 	}
-	public function get_children() : Node_List_Interface {
+	public function get_children(): Node_List_Interface {
 		return new Node_List();
 	}
-	public function set_value( $val ) : Node_Interface {
+	public function set_value( $val ): Node_Interface {
 		return $this->set_text_content( $val );
 	}
 	public function get_value() {
 		return $this->get_text_content();
 	}
-	public function get_attributes() : array {
+	public function get_attributes(): array {
 		if ( ! $this->get_attribute( 'cols' ) ) {
 			$this->set_attribute( 'cols', 45 );
 		}

@@ -1,15 +1,17 @@
 <?php
+	/**
+	 * @inheritDoc
+	 * @suppress PhanTypeMismatchReturn
+	 */
+
+declare(strict_types=1);
 
 namespace Queulat\Forms;
 
 trait Options_Trait {
 	protected $options;
 
-	/**
-	 * @inheritDoc
-	 * @suppress PhanTypeMismatchReturn
-	 */
-	public function set_options( $options ) : Node_Interface {
+	public function set_options( $options ): Node_Interface {
 		$this->options = $options;
 		return $this;
 	}

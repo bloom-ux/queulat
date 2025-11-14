@@ -1,11 +1,13 @@
 <?php
-
-namespace Queulat\Forms;
-
 /**
  * The Attributes_Trait helps in implementing all of the required methods for an
  * element supporting HTML attributes
  */
+
+declare(strict_types=1);
+
+namespace Queulat\Forms;
+
 trait Attributes_Trait {
 
 	/**
@@ -25,38 +27,38 @@ trait Attributes_Trait {
 	/**
 	 * @inheritDoc
 	 */
-	public static function get_global_attribute_pattern_prefixes() : array {
-		return [
+	public static function get_global_attribute_pattern_prefixes(): array {
+		return array(
 			'data',
 			'aria',
-		];
+		);
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public static function get_element_attributes() : array {
-		return [];
+	public static function get_element_attributes(): array {
+		return array();
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public static function get_global_attributes() : array {
-		return [];
+	public static function get_global_attributes(): array {
+		return array();
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function has_attribute( string $key ) : bool {
+	public function has_attribute( string $key ): bool {
 		return isset( $this->attributes[ $key ] );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function has_attributes( array $keys ) : bool {
+	public function has_attributes( array $keys ): bool {
 		return (bool) array_intersect( array_keys( $this->get_attributes() ), $keys );
 	}
 
@@ -72,7 +74,7 @@ trait Attributes_Trait {
 	 * @return Node_Interface Reference to the same element
 	 * @suppress PhanTypeMismatchReturn
 	 */
-	public function set_attribute( string $attr, $value ) : Node_Interface {
+	public function set_attribute( string $attr, $value ): Node_Interface {
 		$this->attributes[ $attr ] = $value;
 		return $this;
 	}
@@ -84,7 +86,7 @@ trait Attributes_Trait {
 	 * @return Node_Interface   Reference to the same object
 	 * @suppress PhanTypeMismatchReturn
 	 */
-	public function set_attributes( array $attributes = array() ) : Node_Interface {
+	public function set_attributes( array $attributes = array() ): Node_Interface {
 		foreach ( $attributes as $key => $val ) {
 			$this->set_attribute( $key, $val );
 		}
@@ -97,7 +99,7 @@ trait Attributes_Trait {
 	 * @param  string $attr The name of the attribute
 	 * @return string       The value of the attribute. Non-scalar values are json_encoded
 	 */
-	public function get_attribute( string $attr ) : string {
+	public function get_attribute( string $attr ): string {
 		if ( isset( $this->attributes[ $attr ] ) ) {
 			return is_string( $this->attributes[ $attr ] ) ? $this->attributes[ $attr ] : json_encode( $this->attributes[ $attr ] );
 		}
@@ -109,7 +111,7 @@ trait Attributes_Trait {
 	 *
 	 * @return array Value of all attributes, indexed by attribute name
 	 */
-	public function get_attributes() : array {
+	public function get_attributes(): array {
 		return $this->attributes;
 	}
 
@@ -118,7 +120,7 @@ trait Attributes_Trait {
 	 *
 	 * @return array "class" attribute value as an array
 	 */
-	public function get_class_list() : array {
+	public function get_class_list(): array {
 		$classes = $this->get_attribute( 'class' );
 		$classes = explode( ' ', $classes );
 		$classes = array_unique( $classes );
@@ -130,7 +132,7 @@ trait Attributes_Trait {
 	 *
 	 * @return string The complete value of "class" as an string (without duplicates)
 	 */
-	public function get_class_name() : string {
+	public function get_class_name(): string {
 		return implode( ' ', $this->get_class_list() );
 	}
 
@@ -141,7 +143,7 @@ trait Attributes_Trait {
 	 * @return Node_Interface        Reference to the same object
 	 * @suppress PhanTypeMismatchReturn
 	 */
-	public function add_class( string $class ) : Node_Interface {
+	public function add_class( string $class ): Node_Interface {
 		$classes   = $this->get_class_list();
 		$classes[] = $class;
 		$this->set_attribute( 'class', implode( ' ', $classes ) );
@@ -155,11 +157,14 @@ trait Attributes_Trait {
 	 * @return Node_Interface        Reference to the same object
 	 * @suppress PhanTypeMismatchReturn
 	 */
-	public function remove_class( string $class ) : Node_Interface {
+	public function remove_class( string $class ): Node_Interface {
 		$classes = $this->get_class_list();
-		$without = array_filter( $classes, function( $item ) use ( $class ) {
-			return $item !== $class;
-		} );
+		$without = array_filter(
+			$classes,
+			function ( $item ) use ( $class ) {
+				return $item !== $class;
+			}
+		);
 		$this->set_attribute( 'class', implode( ' ', $without ) );
 		return $this;
 	}
@@ -169,7 +174,7 @@ trait Attributes_Trait {
 	 *
 	 * @return string The value for the id attribute
 	 */
-	public function get_id() : string {
+	public function get_id(): string {
 		return $this->get_attribute( 'id' );
 	}
 
@@ -179,7 +184,7 @@ trait Attributes_Trait {
 	 * @uses esc_attr()
 	 * @return string Element attributes
 	 */
-	protected function render_attributes() : string {
+	protected function render_attributes(): string {
 		$out = '';
 		foreach ( $this->get_attributes() as $key => $val ) {
 			if ( ! is_string( $val ) ) {
@@ -196,7 +201,7 @@ trait Attributes_Trait {
 	 * @suppress PhanUndeclaredMethod
 	 */
 	protected function collect_attributes() {
-		if ( is_callable( [ $this, 'get_properties' ] ) ) {
+		if ( is_callable( array( $this, 'get_properties' ) ) ) {
 			$element_attributes = array_merge( static::get_global_attributes(), static::get_element_attributes() );
 			foreach ( $this->get_properties() as $key => $val ) {
 				if ( in_array( $key, $element_attributes ) ) {

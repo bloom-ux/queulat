@@ -1,10 +1,11 @@
 <?php
+declare(strict_types=1);
 
 namespace Queulat\Validator;
 
 class Value_In implements Validator_Interface {
-	private $valid_values = [];
-	public function __construct( array $valid_values = [] ) {
+	private $valid_values = array();
+	public function __construct( array $valid_values = array() ) {
 		$this->valid_values = $valid_values;
 	}
 	public function is_valid( $value ): bool {

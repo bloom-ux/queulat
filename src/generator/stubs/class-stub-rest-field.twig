@@ -1,0 +1,69 @@
+<?php
+/**
+ * REST field for {{ object_type }} objects.
+ *
+ * @package {{ namespace|replace({'\\':'\\'}) }}
+ */
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use Queulat\REST_Field;
+use WP_REST_Request;
+use WP_Error;
+use WP_Post;
+use WP_Term;
+use WP_User;
+
+class {{ class_name }} extends REST_Field {
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_object_type(): string {
+		return '{{ object_type }}';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_attribute(): string {
+		return '{{ attribute }}';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function value_callback( array $response_data, string $field_name, WP_REST_Request $request, string $object_type ): mixed {
+		return $response_data[ $field_name ] ?? null;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function sanitize_callback( mixed $value, WP_REST_Request $request, string $field_name ) {
+		return $value;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function update_callback( $field_value, WP_Post|WP_Term|WP_User $data_object, $field_name, WP_REST_Request $request ): true|WP_Error {
+		return true;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function validate_callback( mixed $value, WP_REST_Request $request, string $field_name ): bool|WP_Error {
+		return true;
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_description(): string {
+		return __( 'Custom REST field description.', 'queulat' );
+	}
+}

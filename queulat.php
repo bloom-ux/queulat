@@ -1,21 +1,34 @@
 <?php
 /**
  * Plugin Name: Queulat
- * Plugin URI: https://www.yukei.net/queulat
+ * Plugin URI: https://github.com/bloom-ux/queulat
  * Description: Developers toolset for WordPress
  * Version: 0.1.0
- * Author: Felipe Lavín
- * Author URI: https://www.yukei.net
+ * Author: bloom.lat
+ * Author URI: https://www.bloom.lat
  * License: GPL-3.0
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: queulat
  * Domain Path: src/languages
+ *
+ * @package Queulat
  */
 
-if ( is_readable( __DIR__ . '/vendor/autoload.php' ) ) {
-	require_once __DIR__ . '/vendor/autoload.php';
-} elseif ( is_readable( __DIR__ . '/queulat/vendor/autoload.php' ) ) {
-	require_once __DIR__ . '/queulat/vendor/autoload.php';
+declare(strict_types=1);
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-( new Queulat\Bootstrap )->init();
+$queulat_plugin_dir = trailingslashit( plugin_dir_path( __FILE__ ) );
+
+if ( is_readable( $queulat_plugin_dir . 'vendor/autoload.php' ) ) {
+	require_once $queulat_plugin_dir . 'vendor/autoload.php';
+} elseif ( is_readable( trailingslashit( dirname( $queulat_plugin_dir ) ) . 'queulat/vendor/autoload.php' ) ) {
+	require_once trailingslashit( dirname( $queulat_plugin_dir ) ) . 'queulat/vendor/autoload.php';
+}
+
+require_once $queulat_plugin_dir . 'src/helpers/class-autoloader.php';
+\Queulat\Helpers\Autoloader::boot( 'Queulat\\', __DIR__ . '/src' );
+
+( new Queulat\Bootstrap() )->init();

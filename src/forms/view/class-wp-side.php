@@ -1,4 +1,11 @@
 <?php
+	/**
+	 * Set "view" attributes on each form element
+	 *
+	 * @param Attributes_Interface $element A form element
+	 */
+
+declare(strict_types=1);
 
 namespace Queulat\Forms\View;
 
@@ -24,7 +31,7 @@ class WP_Side extends Forms\Form_View {
 				$this->set_input_size( $element );
 				$out     .= '<div class="control-group">';
 					$out .= '<p>';
-				if ( is_callable( [ $element, 'get_label' ] ) && ! empty( $element->get_label() ) ) {
+				if ( is_callable( array( $element, 'get_label' ) ) && ! empty( $element->get_label() ) ) {
 					$out .= '<label for="' . $element->get_attribute( 'id' ) . '">' . $element->get_label() . ':</label> ';
 				}
 						$out .= (string) $element;
@@ -37,18 +44,13 @@ class WP_Side extends Forms\Form_View {
 		return $out;
 	}
 
-	/**
-	 * Set "view" attributes on each form element
-	 *
-	 * @param Attributes_Interface $element A form element
-	 */
 	protected function set_element_view_attributes( Attributes_Interface &$element ) {
 		$has_id  = $element->get_attribute( 'id' );
 		$form_id = empty( $this->form->get_attribute( 'id' ) ) ? 'side-form' : $this->form->get_attribute( 'id' );
 		if ( ! $has_id ) {
 			$element->set_attribute( 'id', $form_id . '-' . $this->i );
 		}
-		$this->i++;
+		++$this->i;
 	}
 	/**
 	 * Automatically set a suitable class for text input fields

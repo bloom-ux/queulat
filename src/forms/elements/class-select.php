@@ -1,4 +1,12 @@
 <?php
+	/**
+	 * Allowed element attributes
+	 *
+	 * @return array Element Attributes
+	 * @link http://www.w3.org/TR/html5/forms.html#the-select-element
+	 */
+
+declare(strict_types=1);
 
 namespace Queulat\Forms\Element;
 
@@ -13,14 +21,8 @@ class Select extends Forms\HTML_Form_Element implements Forms\Option_Node_Interf
 
 	protected $value = null;
 
-	/**
-	 * Allowed element attributes
-	 *
-	 * @return array Element Attributes
-	 * @link http://www.w3.org/TR/html5/forms.html#the-select-element
-	 */
-	public static function get_element_attributes() : array {
-		return [
+	public static function get_element_attributes(): array {
+		return array(
 			'autofocus',
 			'disabled',
 			'form',
@@ -28,18 +30,18 @@ class Select extends Forms\HTML_Form_Element implements Forms\Option_Node_Interf
 			'name',
 			'required',
 			'size',
-		];
+		);
 	}
 
-	public function get_tag_name() : string {
+	public function get_tag_name(): string {
 		return 'select';
 	}
 
-	public function get_children() : Node_List_Interface {
+	public function get_children(): Node_List_Interface {
 		return new Node_List( $this->get_options() );
 	}
 
-	public function set_value( $value ) : Node_Interface {
+	public function set_value( $value ): Node_Interface {
 		$this->value = $value;
 		return $this;
 	}

@@ -1,4 +1,11 @@
 <?php
+	/**
+	 * Return the string representation of the form
+	 *
+	 * @return string HTML markup for the form
+	 */
+
+declare(strict_types=1);
 
 namespace Queulat\Forms;
 
@@ -9,10 +16,5 @@ abstract class Form_View implements View_Interface {
 		$this->form = $form;
 	}
 
-	/**
-	 * Return the string representation of the form
-	 *
-	 * @return string HTML markup for the form
-	 */
 	abstract public function __toString();
 }
