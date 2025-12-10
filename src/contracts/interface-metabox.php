@@ -18,8 +18,10 @@ interface Metabox_Interface {
 
 	/**
 	 * Register WordPress hooks.
+	 *
+	 * @return void
 	 */
-	public function init(): void;
+	public function init();
 
 	/**
 	 * Return the identifier for the metabox.
