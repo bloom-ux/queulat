@@ -70,15 +70,15 @@ class Autoloader {
 	/**
 	 * Attempt to load the given class.
 	 *
-	 * @param string $class Fully-qualified class name.
+	 * @param string $classname Fully-qualified class name.
 	 * @return void
 	 */
-	public function load( string $class ): void {
-		if ( '' !== $this->root_namespace && 0 !== strpos( $class, $this->root_namespace ) ) {
+	public function load( string $classname ): void {
+		if ( '' !== $this->root_namespace && 0 !== strpos( $classname, $this->root_namespace ) ) {
 			return;
 		}
 
-		$relative_class = '' !== $this->root_namespace ? substr( $class, strlen( $this->root_namespace ) ) : $class;
+		$relative_class = '' !== $this->root_namespace ? substr( $classname, strlen( $this->root_namespace ) ) : $classname;
 		$segments       = explode( self::NAMESPACE_SEPARATOR, $relative_class );
 
 		$file_segment = array_pop( $segments );
