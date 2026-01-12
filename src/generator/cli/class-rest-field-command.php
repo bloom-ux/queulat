@@ -77,10 +77,10 @@ class REST_Field_Command extends CLI_Command {
 	 */
 	public function get_command_arguments(): array {
 		return array(
-			new CLI_Argument( CLI_Argument_Types::positional, 'class_name', 'The class name for the REST field.' ),
-			new CLI_Argument( CLI_Argument_Types::assoc, 'namespace', 'FQN namespace for the generated class.', true ),
-			new CLI_Argument( CLI_Argument_Types::assoc, 'object_type', 'Object type handled by the field.', true ),
-			new CLI_Argument( CLI_Argument_Types::assoc, 'attribute', 'Attribute name registered on the REST field.', true ),
+			new CLI_Argument( CLI_Argument_Types::positional, 'class_name', 'The class name for the REST field ("My_Attribute", "Foo_Bar")' ),
+			new CLI_Argument( CLI_Argument_Types::assoc, 'namespace', 'FQN namespace for the generated class. ("Vendor\This_Package")', true ),
+			new CLI_Argument( CLI_Argument_Types::assoc, 'object_type', 'Object type handled by the field ("post" or custom post type slug)', true ),
+			new CLI_Argument( CLI_Argument_Types::assoc, 'attribute', 'Attribute name registered on the REST field. ("my_attribute")', true ),
 			new CLI_Argument( CLI_Argument_Types::assoc, 'path', 'Destination directory for the class file.', true ),
 		);
 	}

@@ -238,7 +238,8 @@ class CPT_Plugin extends Abstract_Admin {
 		);
 		$data['map_meta_cap']    = true;
 
-		$plugin = new Custom_Post_Type_Plugin( $slug, $data );
+		$prefix = apply_filters( 'queulat_generator_builder_cpt_plugin_prefix', 'queulat' );
+		$plugin = new Custom_Post_Type_Plugin( $slug, $prefix, $data );
 		$plugin->build();
 
 		return true;

@@ -2,17 +2,19 @@
 /**
  * {{ label }} queries creator
  *
- * @package {{ class_name }}_CPT_Plugin
+ * @package {{ package_name }}
  */
 
-use Queulat\Post_Query;
+namespace {{ namespace }};
+
+use Queulat\Post_Query as Queulat_Post_Query;
 
 /**
- * Create queries for {{ class_name }}_Post_Object objects.
+ * Create queries for Post_Object objects.
  *
- * @method {{ class_name }}_Post_Object current
+ * @method Post_Object current
  */
-class {{ class_name }}_Post_Query extends Post_Query {
+class Post_Query extends Queulat_Post_Query {
 
 	/**
 	 * Get post type slug
@@ -26,10 +28,10 @@ class {{ class_name }}_Post_Query extends Post_Query {
 	/**
 	 * Get the name of the class that decorates query objects
 	 *
-	 * @return string {{ class_name }}_Post_Object::class
+	 * @return string Post_Object::class
 	 */
 	public function get_decorator() : string {
-		return {{ class_name }}_Post_Object::class;
+		return Post_Object::class;
 	}
 
 	/**

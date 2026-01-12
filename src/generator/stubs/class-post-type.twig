@@ -2,15 +2,17 @@
 /**
  * {{ label }} custom post type definition
  *
- * @package {{ class_name }}_CPT_Plugin
+ * @package {{ package_name }}
  */
 
-use Queulat\Post_Type;
+namespace {{ namespace }};
+
+use Queulat\Post_Type as Queulat_Post_Type;
 
 /**
  * {{ class_name }} custom post type
  */
-class {{ class_name }}_Post_Type extends Post_Type {
+class Post_Type extends Queulat_Post_Type {
 
 	/**
 	 * Get post type slug

@@ -60,13 +60,15 @@ class CPT_Plugin_Command extends CLI_Command {
 					}
 				}
 			}
-			$cpt_args = $this->sanitize_cpt_args( $cpt_args );
-			$slug     = $cpt_args['post-type'];
-			unset( $cpt_args['post-type'] );
+			$cpt_args  = $this->sanitize_cpt_args( $cpt_args );
+			$slug      = $cpt_args['post-type'];
+			$namespace = $cpt_args['namespace'];
+			unset( $cpt_args['post-type'], $cpt_args['namespace'] );
 			$cpt_args['rewrite']['slug'] = str_replace( '_', '-', sanitize_key( $slug ) );
 			$cpt_args['capability_type'] = array( sanitize_key( $slug ), sanitize_key( Strings::plural( $slug ) ) );
 			$cpt_args['map_meta_cap']    = true;
-			$new_plugin                  = new Custom_Post_Type_Plugin( $slug, $cpt_args );
+			$cpt_args['show_in_rest']    = isset( $cpt_args['public'] ) ? (bool) $cpt_args['public'] : true;
+			$new_plugin                  = new Custom_Post_Type_Plugin( $slug, $namespace, $cpt_args );
 			$new_plugin->build();
 			exit( 0 );
 		};
@@ -83,6 +85,7 @@ class CPT_Plugin_Command extends CLI_Command {
 			$cpt_args,
 			array(
 				'post-type'    => array( 'sanitize_key' ),
+				'namespace'    => array( 'sanitize_key' ),
 				'singular'     => array( 'sanitize_text_field' ),
 				'plural'       => array( 'sanitize_text_field' ),
 				'description'  => array( 'sanitize_textarea_field' ),
@@ -128,23 +131,30 @@ class CPT_Plugin_Command extends CLI_Command {
 			),
 			new CLI_Argument(
 				CLI_Argument_Types::assoc,
+				'namespace',
+				'String used as namespace for the post type slug and generated classes.',
+				false,
+				false
+			),
+			new CLI_Argument(
+				CLI_Argument_Types::assoc,
 				'singular',
-				'The singular form of the post type name to generate labels'
+				'The singular form of the post type name to generate labels.'
 			),
 			new CLI_Argument(
 				CLI_Argument_Types::assoc,
 				'plural',
-				'The plural form of the post type name to generate labels'
+				'The plural form of the post type name to generate labels.'
 			),
 			new CLI_Argument(
 				CLI_Argument_Types::assoc,
 				'description',
-				'A short descriptive summary of what the post type is'
+				'A short descriptive summary of what the post type is.'
 			),
 			new CLI_Argument(
 				CLI_Argument_Types::flag,
 				'public',
-				'Whether a post type is intended for use publicly either via the admin interface or by front-end users'
+				'Whether a post type is intended for use publicly either via the admin interface or by front-end users.'
 			),
 			new CLI_Argument(
 				CLI_Argument_Types::flag,
@@ -154,7 +164,7 @@ class CPT_Plugin_Command extends CLI_Command {
 			new CLI_Argument(
 				CLI_Argument_Types::assoc,
 				'menu_icon',
-				'Name of a Dashicons element, such as \'dashicons-admin-plugins\''
+				'Name of a Dashicons element, such as \'dashicons-admin-plugins\'.'
 			),
 		);
 		return $args;

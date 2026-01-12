@@ -239,7 +239,7 @@ abstract class Metabox implements Metabox_Interface {
 	 */
 	final public function content_callback() {
 		global $post;
-		// create "form" (not actually forms,they are part of the greater "post" form).
+		// create "form" (not actually forms, they are part of the greater "post" form).
 		$form = new Forms\Metabox_Form( array( 'id' => $this->id . '-form' ) );
 		$args = $this->get_args();
 		if ( isset( $args['context'] ) && 'side' === $args['context'] ) {

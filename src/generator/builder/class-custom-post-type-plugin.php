@@ -36,15 +36,31 @@ class Custom_Post_Type_Plugin {
 	private $raw_slug = '';
 
 	/**
+	 * Hold the raw namespace prefix
+	 *
+	 * @var string
+	 */
+	private $raw_prefix = 'queulat';
+
+	/**
+	 * Template variables
+	 *
+	 * @var array
+	 */
+	private array $template_vars = array();
+
+	/**
 	 * Build a new Custom Post Type plugin builder
 	 *
-	 * @param string $slug The post type slug.
+	 * @param string $slug The post type slug (snake_case).
+	 * @param string $prefix Namespace prefix (snake_case).
 	 * @param array  $args  Post type arguments.
 	 * @see https://developer.wordpress.org/reference/functions/register_post_type/#Arguments
 	 */
-	public function __construct( string $slug, array $args = array() ) {
+	public function __construct( string $slug, string $prefix = 'queulat', array $args = array() ) {
 		$this->raw_slug     = $slug;
-		$sanitized_slug     = sanitize_key( $slug );
+		$this->raw_prefix   = $prefix;
+		$sanitized_slug     = mb_strtolower( sanitize_key( $this->raw_prefix ) . '_' . sanitize_key( $this->raw_slug ) );
 		$this->wp_post_type = new WP_Post_Type( $sanitized_slug, $args );
 		if ( empty( $args['labels'] ) ) {
 			$this->wp_post_type->labels = $this->generate_labels( $args );
@@ -81,9 +97,10 @@ class Custom_Post_Type_Plugin {
 	/**
 	 * Render the post type arguments as string
 	 *
+	 * @param string $package_name Package name for use in localization strings.
 	 * @return string
 	 */
-	private function render_post_type_arguments(): string {
+	private function render_post_type_arguments( string $package_name ): string {
 		$object_vars                    = get_object_vars( $this->wp_post_type );
 		$longest_key                    = Renderer::get_longest_key_length( array_keys( $object_vars ) );
 		$object_vars['capability_type'] = array(
@@ -101,7 +118,7 @@ class Custom_Post_Type_Plugin {
 			if ( strpos( $key, '_' ) === 0 || 'name' === $key || 'cap' === $key ) {
 				continue;
 			}
-			$properties .= Renderer::render_array_member( $key, $val, $longest_key, in_array( $key, $localize, true ), "cpt_{$this->wp_post_type->name}" );
+			$properties .= Renderer::render_array_member( $key, $val, $longest_key, in_array( $key, $localize, true ), $package_name ? $package_name : '' );
 		}
 		return $properties;
 	}
@@ -112,13 +129,20 @@ class Custom_Post_Type_Plugin {
 	 * @return array Associative array with var name as keys
 	 */
 	public function get_template_vars(): array {
+		if ( ! empty( $this->template_vars ) ) {
+			return $this->template_vars;
+		}
 		$label               = $this->wp_post_type->label;
-		$file_name           = strtolower( Strings::to_kebab_case( $this->wp_post_type->name ) );
+		$file_name           = Strings::to_kebab_case( $this->wp_post_type->name );
 		$class_name          = Strings::to_capitalized_snake_case( $this->raw_slug );
 		$description         = $this->wp_post_type->description;
 		$post_type           = $this->wp_post_type->name;
-		$post_type_arguments = Renderer::ident( $this->render_post_type_arguments(), 3 );
-		return compact( 'label', 'file_name', 'class_name', 'description', 'post_type', 'post_type_arguments' );
+		$prefix              = $this->raw_prefix;
+		$namespace           = Strings::to_capitalized_snake_case( $this->raw_prefix ) . '\\' . $class_name;
+		$package_name        = str_replace( '_', '-', sanitize_key( $this->raw_prefix ) . '-' . sanitize_key( $this->raw_slug ) . '-cpt-plugin' );
+		$post_type_arguments = Renderer::ident( $this->render_post_type_arguments( $package_name ), 3 );
+		$this->template_vars = compact( 'label', 'file_name', 'class_name', 'description', 'post_type', 'post_type_arguments', 'prefix', 'namespace', 'package_name' );
+		return $this->template_vars;
 	}
 
 	/**
@@ -129,10 +153,9 @@ class Custom_Post_Type_Plugin {
 	public function get_templates(): array {
 		return array(
 			'stub-cpt-plugin.twig',
-			'class-stub-post-type.twig',
-			'class-stub-post-query.twig',
-			'class-stub-post-object.twig',
-			'class-stub-service-provider.twig',
+			'class-post-type.twig',
+			'class-post-query.twig',
+			'class-post-object.twig',
 		);
 	}
 
@@ -143,9 +166,7 @@ class Custom_Post_Type_Plugin {
 		$template_vars = $this->get_template_vars();
 
 		// replace "stub" in stub file names with the file name.
-		$stub   = $template_vars['file_name'];
-		$prefix = apply_filters( 'queulat_generate_builder_ctp_plugin', 'queulat-' );
-
+		$stub         = $template_vars['file_name'];
 		$loader       = new FilesystemLoader( __DIR__ . '/../stubs' );
 		$twig         = new Environment( $loader, array() );
 		$templates    = $this->get_templates();
@@ -171,7 +192,7 @@ class Custom_Post_Type_Plugin {
 
 		global $wp_filesystem;
 
-		$plugin_dir = "{$prefix}{$template_vars['file_name']}-cpt-plugin";
+		$plugin_dir = $template_vars['package_name'];
 
 		$wp_filesystem->mkdir( WP_PLUGIN_DIR . "/{$plugin_dir}" );
 		$wp_filesystem->mkdir( WP_PLUGIN_DIR . "/{$plugin_dir}/includes" );

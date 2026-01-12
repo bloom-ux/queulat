@@ -1,9 +1,4 @@
 <?php
-declare(strict_types=1);
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 /**
  * Plugin Name: {{ label }} Custom Post Type Plugin
  * Plugin URI:
@@ -12,47 +7,41 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Author:
  * Author URI:
  * License: GPL-3.0-or-later
+ * Textdomain: {{ package_name }}
+ * Domain Path: /languages
+ * Update URI:
  *
- * @package {{ class_name }}_CPT_Plugin
+ * @package {{ package_name }}
  */
 
-if ( class_exists( '\Queulat\Helpers\Autoloader' ) ) {
-	\Queulat\Helpers\Autoloader::boot( '', __DIR__ . '/includes' );
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-add_filter(
-	'queulat_service_providers',
-	static function ( array $providers ): array {
-		$providers[] = new {{ class_name }}_Service_Provider();
-		return $providers;
-	}
-);
-
-( new {{ class_name }}_Post_Type() )->init();
-
-register_activation_hook(
-\t__FILE__,
-\tfunction () {
-\t\tif ( ! class_exists( '{{ class_name }}_Post_Type' ) ) {
-\t\t\trequire_once trailingslashit( plugin_dir_path( __FILE__ ) ) . 'includes/class-{{ file_name }}-post-type.php';
-\t\t}
-\t\t{{ class_name }}_Post_Type::activate_plugin();
-\t}
-);
+if ( class_exists( '\Queulat\Helpers\Autoloader' ) ) {
+	\Queulat\Helpers\Autoloader::boot( '{{ namespace }}', __DIR__ . '/includes' );
+}
 
 add_action(
 	'plugins_loaded',
-	function () {
-		if ( ! class_exists( '{{ class_name }}_Post_Type' ) ) {
-			require_once trailingslashit( plugin_dir_path( __FILE__ ) ) . 'includes/class-{{ file_name }}-post-type.php';
-		}
-		if ( ! class_exists( '{{ class_name }}_Post_Query' ) ) {
-			require_once trailingslashit( plugin_dir_path( __FILE__ ) ) . 'includes/class-{{ file_name }}-post-query.php';
-		}
-		if ( ! class_exists( '{{ class_name }}_Post_Object' ) ) {
-			require_once trailingslashit( plugin_dir_path( __FILE__ ) ) . 'includes/class-{{ file_name }}-post-object.php';
-		}
+	function() {
+		$post_type = new Post_Type();
+		$post_type->init();
 	}
 );
 
-add_action( 'init', array( '{{ class_name }}_Post_Type', 'register_post_type' ) );
+register_activation_hook(
+	__FILE__,
+	function () {
+		if ( ! class_exists( '{{ namespace }}\Post_Type' ) ) {
+			require_once trailingslashit( plugin_dir_path( __FILE__ ) ) . 'includes/class-post-type.php';
+		}
+		Post_Type::activate_plugin();
+	}
+);
+
+add_action( 'init', array( '\{{ namespace }}\Post_Type', 'register_post_type' ) );

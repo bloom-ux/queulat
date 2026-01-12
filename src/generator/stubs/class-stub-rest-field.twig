@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace {{ namespace }};
 
 use Queulat\REST_Field;
+use Queulat\Meta_Type;
 use WP_REST_Request;
 use WP_Error;
 use WP_Post;
@@ -17,6 +18,13 @@ use WP_Term;
 use WP_User;
 
 class {{ class_name }} extends REST_Field {
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_type(): Meta_Type {
+		return Meta_Type::string;
+	}
 
 	/**
 	 * {@inheritdoc}
@@ -30,6 +38,13 @@ class {{ class_name }} extends REST_Field {
 	 */
 	public function get_attribute(): string {
 		return '{{ attribute }}';
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function get_description(): string {
+		return __( 'Custom REST field description.', 'queulat' );
 	}
 
 	/**
@@ -58,12 +73,5 @@ class {{ class_name }} extends REST_Field {
 	 */
 	public function validate_callback( mixed $value, WP_REST_Request $request, string $field_name ): bool|WP_Error {
 		return true;
-	}
-
-	/**
-	 * {@inheritdoc}
-	 */
-	public function get_description(): string {
-		return __( 'Custom REST field description.', 'queulat' );
 	}
 }
