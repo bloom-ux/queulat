@@ -13,9 +13,10 @@ declare(strict_types=1);
 
 namespace Queulat;
 
-use Queulat\Contracts\CLI_Command_Interface;
-use Queulat\Helpers\Container_Factory;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Queulat\Generator\Admin\CPT_Plugin;
+use Queulat\Contracts\Asset_Loader_Interface;
+use Queulat\Generator\CLI\CPT_Plugin_Command;
+use Queulat\Generator\CLI\REST_Field_Command;
 
 /**
  * Hook Queulat into WordPress
@@ -23,30 +24,13 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class Bootstrap {
 
 	/**
-	 * Service container instance.
+	 * Bootstrap Queulat
 	 *
-	 * @var ContainerBuilder
+	 * @param Asset_Loader_Interface $asset_loader An instance of a static assets loader.
 	 */
-	private $container;
-
-	/**
-	 * Whether the container has been booted.
-	 *
-	 * @var bool
-	 */
-	private $container_booted = false;
-
-	/**
-	 * Initialize the bootstrapper.
-	 *
-	 * @param null|ContainerBuilder $container Optional pre-configured container.
-	 */
-	public function __construct( ?ContainerBuilder $container = null ) {
-		if ( $container instanceof ContainerBuilder ) {
-			$this->container        = $container;
-			$this->container_booted = true;
-		}
+	public function __construct( private Asset_Loader_Interface $asset_loader ) {
 	}
+
 	/**
 	 * Initialize the plugin functionality.
 	 *
@@ -56,29 +40,10 @@ class Bootstrap {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'plugins_loaded', array( $this, 'boot_container' ), 90 );
 		add_action( 'plugins_loaded', array( $this, 'init_generator_admin' ), 100 );
 		add_action( 'plugins_loaded', array( $this, 'init_cli_commands' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ), 90 );
 		add_action( 'init', array( $this, 'load_translations' ) );
-	}
-
-	/**
-	 * Retrieve the service container.
-	 *
-	 * @return ContainerBuilder
-	 */
-	public function get_container(): ContainerBuilder {
-		return $this->ensure_container();
-	}
-
-	/**
-	 * Boot the service container during the plugins_loaded hook.
-	 *
-	 * @return void
-	 */
-	public function boot_container(): void {
-		$this->ensure_container();
 	}
 
 	/**
@@ -87,17 +52,8 @@ class Bootstrap {
 	 * @return void
 	 */
 	public function init_generator_admin() {
-		$container = $this->ensure_container();
-
-		if ( ! $container->has( 'queulat.generator.admin.cpt' ) ) {
-			return;
-		}
-
-		$admin = $container->get( 'queulat.generator.admin.cpt' );
-
-		if ( method_exists( $admin, 'init' ) ) {
-			$admin->init();
-		}
+		$generator_admin = new CPT_Plugin();
+		$generator_admin->init();
 	}
 
 	/**
@@ -110,25 +66,12 @@ class Bootstrap {
 			return;
 		}
 
-		$container = $this->ensure_container();
+		$commands = array(
+			new CPT_Plugin_Command(),
+			new REST_Field_Command(),
+		);
 
-		if ( ! $container->hasParameter( 'queulat.generator.cli.commands' ) ) {
-			return;
-		}
-
-		$command_services = (array) $container->getParameter( 'queulat.generator.cli.commands' );
-
-		foreach ( $command_services as $service_id ) {
-			if ( ! $container->has( $service_id ) ) {
-				continue;
-			}
-
-			$command = $container->get( $service_id );
-
-			if ( ! $command instanceof CLI_Command_Interface ) {
-				continue;
-			}
-
+		foreach ( $commands as $command ) {
 			\WP_CLI::add_command(
 				$command->get_name(),
 				$command->get_callable(),
@@ -155,30 +98,6 @@ class Bootstrap {
 	 * @return void
 	 */
 	public function enqueue_assets() {
-		$container = $this->ensure_container();
-
-		if ( ! $container->has( 'queulat.assets.loader' ) ) {
-			return;
-		}
-
-		$loader      = $container->get( 'queulat.assets.loader' );
-		$style_entry = $container->hasParameter( 'queulat.assets.styles.default' ) ? $container->getParameter( 'queulat.assets.styles.default' ) : 'dist/admin.css';
-
-		if ( is_callable( array( $loader, 'enqueue_style' ) ) ) {
-			$loader->enqueue_style( $style_entry );
-		}
-	}
-
-	/**
-	 * Ensure the container is available.
-	 *
-	 * @return ContainerBuilder
-	 */
-	private function ensure_container(): ContainerBuilder {
-		if ( ! $this->container_booted ) {
-			$this->container        = Container_Factory::build();
-			$this->container_booted = true;
-		}
-		return $this->container;
+		$this->asset_loader->enqueue_script( 'admin.css' );
 	}
 }

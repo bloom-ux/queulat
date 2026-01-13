@@ -16,6 +16,11 @@
 
 declare(strict_types=1);
 
+namespace Queulat;
+
+use Queulat\Bootstrap;
+use Queulat\Helpers\Webpack_Asset_Loader;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -31,4 +36,17 @@ if ( is_readable( $queulat_plugin_dir . 'vendor/autoload.php' ) ) {
 require_once $queulat_plugin_dir . 'src/helpers/class-autoloader.php';
 \Queulat\Helpers\Autoloader::boot( 'Queulat\\', __DIR__ . '/src' );
 
-( new Queulat\Bootstrap() )->init();
+add_action(
+	'muplugins_loaded',
+	'\Queulat\bootstrap'
+);
+
+/**
+ * Initialize the framework and hook into WordPress
+ */
+function bootstrap() {
+	$queulat_plugin_dir = plugin_dir_path( __FILE__ );
+	$asset_loader       = new Webpack_Asset_Loader( 'queulat', $queulat_plugin_dir . 'assets/build', plugins_url( '/assets/build', __FILE__ ) );
+	$bootstrap          = new Bootstrap( $asset_loader );
+	$bootstrap->init();
+}
