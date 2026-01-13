@@ -7,7 +7,7 @@
  * Author:
  * Author URI:
  * License: GPL-3.0-or-later
- * Textdomain: {{ package_name }}
+ * Text Domain: {{ package_name }}
  * Domain Path: /languages
  * Update URI:
  *
@@ -26,22 +26,21 @@ if ( class_exists( '\Queulat\Helpers\Autoloader' ) ) {
 	\Queulat\Helpers\Autoloader::boot( '{{ namespace }}', __DIR__ . '/includes' );
 }
 
-add_action(
-	'plugins_loaded',
-	function() {
-		$post_type = new Post_Type();
-		$post_type->init();
-	}
-);
+add_action( 'plugins_loaded', '\{{ namespace }}\bootstrap' );
 
-register_activation_hook(
-	__FILE__,
-	function () {
-		if ( ! class_exists( '{{ namespace }}\Post_Type' ) ) {
-			require_once trailingslashit( plugin_dir_path( __FILE__ ) ) . 'includes/class-post-type.php';
-		}
-		Post_Type::activate_plugin();
-	}
-);
+register_activation_hook( __FILE__, '\{{ namespace }}\plugin_activation' );
 
-add_action( 'init', array( '\{{ namespace }}\Post_Type', 'register_post_type' ) );
+/**
+ * Initialize plugin functionality
+ */
+function bootstrap() {
+	$post_type = new Post_Type();
+	$post_type->init();
+}
+
+/**
+ * Run plugin activation hook
+ */
+function plugin_activation() {
+	Post_Type::activate_plugin();
+}
