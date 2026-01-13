@@ -30,19 +30,19 @@
     },
     "autoload": {
         "classmap":[
-            "src/"
+            "includes/"
         ],
         "files": [
-            "src/helpers/helpers-admin.php",
-            "src/helpers/helpers-custom-post-types.php"
+            "includes/helpers/helpers-admin.php",
+            "includes/helpers/helpers-custom-post-types.php"
         ]
     },
     "scripts": {
-        "fix": "phpcbf src/ --extensions=php",
-        "lint": "parallel-lint ./src --blame --exclude vendor",
-        "sniff": "phpcs src/",
+        "fix": "phpcbf includes/ --extensions=php",
+        "lint": "parallel-lint ./includes --blame --exclude vendor",
+        "sniff": "phpcs includes/",
         "analyze": "phan -p -j 4 --color",
-        "compat": "phpcs -p --standard=PHPCompatibility --runtime-set testVersion 7.4 -n src/ --extensions=php --cache"
+        "compat": "phpcs -p --standard=PHPCompatibility --runtime-set testVersion 7.4 -n includes/ --extensions=php --cache"
     },
     "config": {
         "allow-plugins": {

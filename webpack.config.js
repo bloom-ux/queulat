@@ -1,15 +1,13 @@
 var Encore = require('@symfony/webpack-encore');
 
-Encore
-	.setOutputPath('dist/')
-	.setPublicPath('/dist')
+Encore.setOutputPath('assets/build')
+	.setPublicPath('/')
 	.enableSassLoader()
-	.addStyleEntry('admin', './scss/admin.scss')
-	.enableSourceMaps( ! Encore.isProduction() )
+	.addStyleEntry('admin', './assets/scss/admin.scss')
+	.enableSourceMaps(!Encore.isProduction())
 	.cleanupOutputBeforeBuild()
 	.disableSingleRuntimeChunk()
-	.enableVersioning( Encore.isProduction() )
-;
+	.enableVersioning(Encore.isProduction());
 
 var config = Encore.getWebpackConfig();
 
