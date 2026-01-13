@@ -292,7 +292,7 @@ class Webpack_Asset_Loader implements Asset_Loader_Interface {
 		$rel_path_count_in_uri = substr_count( $file_uri, $rel_file_path );
 		$rel_file_path_in_uri  = strpos( $file_uri, $rel_file_path );
 		$normalized_path       =
-			$rel_path_count_in_uri > 1 ?
+			'/' !== $rel_file_path && $rel_path_count_in_uri > 1 ?
 			substr_replace( $file_uri, '', $rel_file_path_in_uri, strlen( $rel_file_path ) ) :
 			$file_uri;
 		$normalized_path       = apply_filters( 'queulat_webpack_asset_loader_file_uri', $normalized_path, $input_file_path, $this->base_uri );
