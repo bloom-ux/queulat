@@ -33,8 +33,8 @@ if ( is_readable( $queulat_plugin_dir . 'vendor/autoload.php' ) ) {
 	require_once trailingslashit( dirname( $queulat_plugin_dir ) ) . 'queulat/vendor/autoload.php';
 }
 
-require_once $queulat_plugin_dir . 'src/helpers/class-autoloader.php';
-\Queulat\Helpers\Autoloader::boot( 'Queulat\\', __DIR__ . '/src' );
+require_once $queulat_plugin_dir . 'includes/helpers/class-autoloader.php';
+\Queulat\Helpers\Autoloader::boot( 'Queulat\\', __DIR__ . '/includes' );
 
 add_action(
 	'muplugins_loaded',
