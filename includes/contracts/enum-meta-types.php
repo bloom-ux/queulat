@@ -19,4 +19,5 @@ enum Meta_Type: string {
 	case number  = 'number';
 	case array   = 'array';
 	case object  = 'object';
+	case null    = 'null';
 }

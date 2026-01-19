@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Queulat;
+namespace Queulat\Contracts;
 
 /**
  * Interface for REST API field implementations.
@@ -23,9 +23,9 @@ interface REST_Field_Interface {
 	/**
 	 * Get the meta type for this REST field.
 	 *
-	 * @return Meta_Type The field data type.
+	 * @return Meta_Type|Meta_Type[] The field data type.
 	 */
-	public function get_type(): Meta_Type;
+	public function get_type(): Meta_Type|array;
 
 	/**
 	 * Get the object type this field is registered for.

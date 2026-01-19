@@ -50,10 +50,18 @@ abstract class REST_Field implements REST_Field_Interface {
 	 * @return ?array Params for JSON schema or null
 	 */
 	public function get_schema(): ?array {
+		$schema_type =
+			is_array( $this->get_type() ) ?
+			array_map(
+				function ( $item ): string {
+					return $item->value;
+				},
+				$this->get_type()
+			) : $this->get_type()->value;
 		return array(
-			'type'        => $this->get_type()->value,
+			'type'        => $schema_type,
+			'description' => $this->get_description(),
 			'arg_options' => array(
-				'description'       => $this->get_description(),
 				'sanitize_callback' => $this->get_sanitize_callback(),
 				'validate_callback' => $this->get_validate_callback(),
 			),
