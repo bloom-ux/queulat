@@ -25,13 +25,6 @@ use WP_Post_Type;
 abstract class Post_Type implements Post_Type_Interface {
 
 	/**
-	 * Track whether hooks have already been registered.
-	 *
-	 * @var bool
-	 */
-	protected $initialized = false;
-
-	/**
 	 * Get the post type key.
 	 *
 	 * This is what will be used on the database to identify custom post types.
@@ -69,12 +62,10 @@ abstract class Post_Type implements Post_Type_Interface {
 	 * @return void
 	 */
 	public function init(): void {
-		if ( $this->initialized ) {
-			return;
-		}
 		add_action( 'init', array( $this, 'register' ) );
 		add_action( 'wp_initialize_site', array( static::class, 'init_for_site' ), 200, 1 );
-		$this->initialized = true;
+		$post_type_slug = $this->get_post_type();
+		do_action( 'queulat_post_type_init_' . $post_type_slug, $this );
 	}
 
 	/**
