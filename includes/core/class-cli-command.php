@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Queulat;
 
+use JsonSerializable;
 use Queulat\Contracts\CLI_Argument_Interface;
 use Queulat\Contracts\CLI_Command_Interface as CLI_Command_Contract;
 
