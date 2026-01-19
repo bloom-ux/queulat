@@ -7,14 +7,14 @@
 
 namespace {{ namespace }};
 
-use Queulat\Post_Query as Queulat_Post_Query;
+use Queulat\Post_Query;
 
 /**
  * Create queries for Post_Object objects.
  *
  * @method Post_Object current
  */
-class Post_Query extends Queulat_Post_Query {
+class {{ class_name }}_Post_Query extends Post_Query {
 
 	/**
 	 * Get post type slug
@@ -31,7 +31,7 @@ class Post_Query extends Queulat_Post_Query {
 	 * @return string Post_Object::class
 	 */
 	public function get_decorator() : string {
-		return Post_Object::class;
+		return {{ class_name }}_Post_Object::class;
 	}
 
 	/**

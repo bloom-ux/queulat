@@ -138,10 +138,11 @@ class Custom_Post_Type_Plugin {
 		$description         = $this->wp_post_type->description;
 		$post_type           = $this->wp_post_type->name;
 		$prefix              = $this->raw_prefix;
+		$base_name           = Strings::to_kebab_case( $this->raw_slug );
 		$namespace           = Strings::to_capitalized_snake_case( $this->raw_prefix ) . '\\' . $class_name;
-		$package_name        = str_replace( '_', '-', sanitize_key( $this->raw_prefix ) . '-' . sanitize_key( $this->raw_slug ) . '-cpt-plugin' );
+		$package_name        = str_replace( '_', '-', sanitize_key( $this->raw_prefix ) . '-' . sanitize_key( $this->raw_slug ) . '-cpt' );
 		$post_type_arguments = Renderer::ident( $this->render_post_type_arguments( $package_name ), 3 );
-		$this->template_vars = compact( 'label', 'file_name', 'class_name', 'description', 'post_type', 'post_type_arguments', 'prefix', 'namespace', 'package_name' );
+		$this->template_vars = compact( 'label', 'file_name', 'class_name', 'description', 'post_type', 'post_type_arguments', 'prefix', 'base_name', 'namespace', 'package_name' );
 		return $this->template_vars;
 	}
 
@@ -151,11 +152,12 @@ class Custom_Post_Type_Plugin {
 	 * @return array
 	 */
 	public function get_templates(): array {
+		$template_vars = $this->get_template_vars();
 		return array(
-			'stub-cpt-plugin.twig',
-			'class-post-type.twig',
-			'class-post-query.twig',
-			'class-post-object.twig',
+			'stub-cpt.twig'          => "{$template_vars['file_name']}-cpt.php",
+			'class-post-type.twig'   => "class-{$template_vars['base_name']}-post-type.php",
+			'class-post-query.twig'  => "class-{$template_vars['base_name']}-post-query.php",
+			'class-post-object.twig' => "class-{$template_vars['base_name']}-post-object.php",
 		);
 	}
 
@@ -171,16 +173,11 @@ class Custom_Post_Type_Plugin {
 		$twig         = new Environment( $loader, array() );
 		$templates    = $this->get_templates();
 		$output_files = array();
-		foreach ( $templates as $template ) {
-			$output_file_name                  = str_ireplace(
-				array( 'stub', 'twig' ),
-				array( $stub, 'php' ),
-				$template
-			);
+		foreach ( $templates as $template => $output_file_name ) {
 			$output_files[ $output_file_name ] = $twig->render( $template, $template_vars );
 		}
 
-		$url   = wp_nonce_url( 'tools.php?page=queulat-cpt-plugin-generator', 'queulat-cpt-plgin-generator' );
+		$url   = wp_nonce_url( 'tools.php?page=queulat-cpt-plugin-generator', 'queulat-cpt-plugin-generator' );
 		$creds = request_filesystem_credentials( $url, '', false, WP_PLUGIN_DIR, array() );
 
 		if ( ! $creds ) {

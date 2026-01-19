@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: {{ label }} Custom Post Type Plugin
+ * Plugin Name: {{ label }} Custom Post Type
  * Plugin URI:
  * Description: {{ description }}
  * Version: 0.1.0
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( class_exists( '\Queulat\Helpers\Autoloader' ) ) {
+if ( is_callable( array( '\Queulat\Helpers\Autoloader', 'boot' ) ) ) {
 	\Queulat\Helpers\Autoloader::boot( '{{ namespace }}', __DIR__ . '/includes' );
 }
 
@@ -34,13 +34,13 @@ register_activation_hook( __FILE__, '\{{ namespace }}\plugin_activation' );
  * Initialize plugin functionality
  */
 function bootstrap() {
-	$post_type = new Post_Type();
-	$post_type->init();
+	$post_type = new {{ class_name }}_Post_Type();
+	queulat_register_hooks( $post_type );
 }
 
 /**
  * Run plugin activation hook
  */
 function plugin_activation() {
-	Post_Type::activate_plugin();
+	{{ class_name }}_Post_Type::activate_plugin();
 }
