@@ -9,7 +9,7 @@
  * License: GPL-3.0
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: queulat
- * Domain Path: src/languages
+ * Domain Path: languages
  *
  * @package Queulat
  */
