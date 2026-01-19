@@ -33,6 +33,7 @@
             "includes/"
         ],
         "files": [
+            "includes/helpers/helpers-functions.php",
             "includes/helpers/helpers-admin.php",
             "includes/helpers/helpers-custom-post-types.php"
         ]
