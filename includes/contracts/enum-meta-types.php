@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Queulat;
+namespace Queulat\Contracts;
 
 /**
  * Allowed meta field types

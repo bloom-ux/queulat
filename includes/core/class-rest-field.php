@@ -14,6 +14,8 @@ use WP_Post;
 use WP_Term;
 use WP_Error;
 use WP_REST_Request;
+use Queulat\Contracts\REST_Field_Interface;
+
 
 /**
  * Abstract class for a REST field
