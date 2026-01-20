@@ -58,9 +58,18 @@ class Custom_Post_Type_Plugin {
 	 * @see https://developer.wordpress.org/reference/functions/register_post_type/#Arguments
 	 */
 	public function __construct( string $slug, string $prefix = 'queulat', array $args = array() ) {
-		$this->raw_slug     = $slug;
-		$this->raw_prefix   = $prefix;
-		$sanitized_slug     = mb_strtolower( sanitize_key( $this->raw_prefix ) . '_' . sanitize_key( $this->raw_slug ) );
+		$this->raw_slug   = $slug;
+		$this->raw_prefix = $prefix;
+		$sanitized_slug   = mb_strtolower( sanitize_key( $this->raw_prefix ) . '_' . sanitize_key( $this->raw_slug ) );
+		if ( empty( $args['rest_namespace'] ) ) {
+			$args['rest_namespace'] = "{$prefix}/v1";
+		}
+		if ( ! empty( $args['singular'] ) && empty( $args['plural'] ) ) {
+			$args['plural'] = Strings::plural( $args['singular'] );
+		}
+		if ( empty( $args['rest_base'] ) ) {
+			$args['rest_base'] = Strings::to_kebab_case( mb_strtolower( Strings::plural( $slug ) ) );
+		}
 		$this->wp_post_type = new WP_Post_Type( $sanitized_slug, $args );
 		if ( empty( $args['labels'] ) ) {
 			$this->wp_post_type->labels = $this->generate_labels( $args );
