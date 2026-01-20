@@ -9,20 +9,20 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
-use Queulat\REST_Field;
-use Queulat\Meta_Type;
-use WP_REST_Request;
-use WP_Error;
+use WP_User;
 use WP_Post;
 use WP_Term;
-use WP_User;
+use WP_Error;
+use WP_REST_Request;
+use Queulat\Meta_Type;
+use Queulat\REST_Field;
 
 class {{ class_name }} extends REST_Field {
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function get_type(): Meta_Type {
+	public function get_type(): Meta_Type|array {
 		return Meta_Type::string;
 	}
 
