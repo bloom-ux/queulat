@@ -9,12 +9,12 @@ declare(strict_types=1);
 
 namespace Queulat\Generator\CLI;
 
-use Queulat\CLI_Argument;
-use Queulat\CLI_Argument_Types;
-use Queulat\CLI_Command;
-use Queulat\Generator\Builder\Custom_Post_Type_Plugin;
-use Queulat\Helpers\Strings;
 use WP_CLI;
+use Queulat\CLI_Command;
+use Queulat\CLI_Argument;
+use Queulat\Helpers\Strings;
+use Queulat\CLI_Argument_Types;
+use Queulat\Generator\Builder\Custom_Post_Type_Plugin;
 
 use function WP_CLI\Utils\get_flag_value;
 
@@ -70,7 +70,7 @@ class CPT_Plugin_Command extends CLI_Command {
 			$cpt_args['map_meta_cap']    = true;
 			$cpt_args['show_in_rest']    = isset( $cpt_args['public'] ) ? (bool) $cpt_args['public'] : true;
 			$new_plugin                  = new Custom_Post_Type_Plugin( $slug, $namespace, $cpt_args );
-			$built = $new_plugin->build();
+			$built                       = $new_plugin->build();
 			if ( $built ) {
 				/* translators: %s: slug of the post type */
 				WP_CLI::success( sprintf( __( 'Custom post type plugin for %s created successfully', 'queulat' ), $slug ) );
