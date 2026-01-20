@@ -40,7 +40,7 @@ class REST_Field_Command extends CLI_Command {
 			$namespace          = $assoc_args['namespace'] ?? 'Queulat\\REST';
 			$object_type        = $assoc_args['object_type'] ?? 'post';
 			$attribute          = $assoc_args['attribute'] ?? 'custom_field';
-			$destination        = $assoc_args['path'] ?? 'includes';
+			$destination        = $assoc_args['dir'] ?? 'includes';
 
 			$loader    = new FilesystemLoader( __DIR__ . '/../stubs' );
 			$twig      = new Environment( $loader );
@@ -81,7 +81,7 @@ class REST_Field_Command extends CLI_Command {
 			new CLI_Argument( CLI_Argument_Types::assoc, 'namespace', 'FQN namespace for the generated class. ("Vendor\This_Package")', true ),
 			new CLI_Argument( CLI_Argument_Types::assoc, 'object_type', 'Object type handled by the field ("post" or custom post type slug)', true ),
 			new CLI_Argument( CLI_Argument_Types::assoc, 'attribute', 'Attribute name registered on the REST field. ("my_attribute")', true ),
-			new CLI_Argument( CLI_Argument_Types::assoc, 'path', 'Destination directory for the class file.', true ),
+			new CLI_Argument( CLI_Argument_Types::assoc, 'dir', 'Destination directory for the class file.', true ),
 		);
 	}
 

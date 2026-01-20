@@ -132,7 +132,7 @@ class CPT_Plugin_Command extends CLI_Command {
 			new CLI_Argument(
 				CLI_Argument_Types::positional,
 				'post-type',
-				'The post type identifier (key stored in post_type on database). Must be less than 20 characters, only lowercase alphanumeric characters.',
+				'The post type identifier; will be prefixed with "namespace". Must be less than 20 characters in total, only lowercase alphanumeric characters.',
 				false,
 				false
 			),
