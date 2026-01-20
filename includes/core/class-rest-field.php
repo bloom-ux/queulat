@@ -14,13 +14,14 @@ use WP_Post;
 use WP_Term;
 use WP_Error;
 use WP_REST_Request;
+use Queulat\Contracts\Hookable_Interface;
 use Queulat\Contracts\REST_Field_Interface;
 
 
 /**
  * Abstract class for a REST field
  */
-abstract class REST_Field implements REST_Field_Interface {
+abstract class REST_Field implements REST_Field_Interface, Hookable_Interface {
 
 	/**
 	 * Hook into WordPress.

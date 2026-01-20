@@ -15,14 +15,15 @@ declare(strict_types=1);
 
 namespace Queulat;
 
-use Queulat\Contracts\Post_Type_Interface;
 use WP_Error;
 use WP_Post_Type;
+use Queulat\Contracts\Hookable_Interface;
+use Queulat\Contracts\Post_Type_Interface;
 
 /**
  * Abtract class for registering and defining a custom post type.
  */
-abstract class Post_Type implements Post_Type_Interface {
+abstract class Post_Type implements Post_Type_Interface, Hookable_Interface {
 
 	/**
 	 * Get the post type key.
