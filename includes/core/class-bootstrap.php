@@ -13,10 +13,13 @@ declare(strict_types=1);
 
 namespace Queulat;
 
+use Queulat\Forms\Node_Factory;
 use Queulat\Generator\Admin\CPT_Plugin;
+use Queulat\Forms\Node_Factory_Call_Type;
 use Queulat\Contracts\Asset_Loader_Interface;
 use Queulat\Generator\CLI\CPT_Plugin_Command;
 use Queulat\Generator\CLI\REST_Field_Command;
+use Queulat\Forms\Node_Factory_Argument_Handler;
 
 /**
  * Hook Queulat into WordPress
@@ -44,6 +47,28 @@ class Bootstrap {
 		add_action( 'plugins_loaded', array( $this, 'init_cli_commands' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ), 90 );
 		add_action( 'init', array( $this, 'load_translations' ) );
+		$this->init_queulat_node_factory();
+	}
+
+	/**
+	 * Initialize the node factory
+	 *
+	 * Registers factory argument handlers
+	 */
+	private function init_queulat_node_factory() {
+		$handlers = array(
+			new Node_Factory_Argument_Handler( 'attributes', 'set_attribute', Node_Factory_Call_Type::KEY_VALUE ),
+			new Node_Factory_Argument_Handler( 'label', 'set_label' ),
+			new Node_Factory_Argument_Handler( 'name', 'set_name' ),
+			new Node_Factory_Argument_Handler( 'options', 'set_options', Node_Factory_Call_Type::VALUE ),
+			new Node_Factory_Argument_Handler( 'properties', 'set_property', Node_Factory_Call_Type::KEY_VALUE ),
+			new Node_Factory_Argument_Handler( 'value', 'set_value' ),
+			new Node_Factory_Argument_Handler( 'text_content', 'set_text_content' ),
+			new Node_Factory_Argument_Handler( 'children', 'append_child', Node_Factory_Call_Type::VALUE_ITEMS ),
+		);
+		foreach ( $handlers as $handler ) {
+			Node_Factory::register_argument( $handler );
+		}
 	}
 
 	/**
