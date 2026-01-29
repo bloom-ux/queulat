@@ -132,7 +132,7 @@ class CPT_Plugin_Command extends CLI_Command {
 			new CLI_Argument(
 				CLI_Argument_Types::positional,
 				'post-type',
-				'The post type identifier; will be prefixed with "namespace". Must be less than 20 characters in total, only lowercase alphanumeric characters.',
+				'The post type identifier (for instance, "album"); will be prefixed with "namespace" ("namespace_album"). Must be less than 20 characters in total, only lowercase alphanumeric characters.',
 				false,
 				false
 			),
@@ -171,7 +171,7 @@ class CPT_Plugin_Command extends CLI_Command {
 			new CLI_Argument(
 				CLI_Argument_Types::assoc,
 				'menu_icon',
-				'Name of a Dashicons element, such as \'dashicons-admin-plugins\'.'
+				'Name of a Dashicons icon, such as \'dashicons-admin-plugins\'. Use \'none\' to leave empty and set the icon with CSS.'
 			),
 		);
 		return $args;
