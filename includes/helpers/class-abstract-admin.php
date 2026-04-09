@@ -185,7 +185,7 @@ abstract class Abstract_Admin {
 				$this->get_position() ? $this->get_position() : null
 			);
 		}
-		return $this->admin_hook;
+		return (string) $this->admin_hook;
 	}
 
 	/**
