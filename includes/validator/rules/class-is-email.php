@@ -21,7 +21,7 @@ class Is_Email implements Validator_Interface {
 	 * @return bool True if valid, false otherwise.
 	 */
 	public function is_valid( $value ): bool {
-		return is_email( $value );
+		return (bool) is_email( $value );
 	}
 	/**
 	 * Get validation error message.
