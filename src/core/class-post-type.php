@@ -78,7 +78,7 @@ abstract class Post_Type {
 		if ( function_exists( 'is_multisite' ) && is_multisite() && $network_wide ) {
 			$blogs = get_sites();
 			foreach ( $blogs as $blog ) {
-				static::init_for_site( $blog->blog_id );
+				static::init_for_site( $blog );
 			}
 		} else {
 			static::activate_for_blog();
