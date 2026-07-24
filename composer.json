@@ -13,7 +13,7 @@
 		"wp-cli/wp-cli": "Provides integration with code generators"
 	},
     "require": {
-        "twig/twig": "^3.27",
+        "twig/twig": "^3",
         "doctrine/inflector": "^2.0",
         "composer/installers": "^2",
         "minwork/array": "^1",
