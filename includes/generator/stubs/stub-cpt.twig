@@ -1,0 +1,46 @@
+<?php
+/**
+ * Plugin Name: {{ label }} Custom Post Type
+ * Plugin URI:
+ * Description: {{ description }}
+ * Version: 0.1.0
+ * Author:
+ * Author URI:
+ * License: GPL-3.0-or-later
+ * Text Domain: {{ package_name }}
+ * Domain Path: /languages
+ * Update URI:
+ *
+ * @package {{ package_name }}
+ */
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+if ( is_callable( array( '\Queulat\Helpers\Autoloader', 'boot' ) ) ) {
+	\Queulat\Helpers\Autoloader::boot( '{{ namespace }}', __DIR__ . '/includes' );
+}
+
+add_action( 'plugins_loaded', '\{{ namespace }}\bootstrap' );
+
+register_activation_hook( __FILE__, '\{{ namespace }}\plugin_activation' );
+
+/**
+ * Initialize plugin functionality
+ */
+function bootstrap() {
+	$post_type = new {{ class_name }}_Post_Type();
+	queulat_register_hooks( $post_type );
+}
+
+/**
+ * Run plugin activation hook
+ */
+function plugin_activation() {
+	{{ class_name }}_Post_Type::activate_plugin();
+}
