@@ -46,6 +46,26 @@ Plugin headers are optional, but recommended.
 
 You could also use something like [Bedrock's autoloader](https://github.com/roots/bedrock/blob/master/web/app/mu-plugins/bedrock-autoloader.php), which will load all mu-plugins installed on sub-folders (you can just copy that file on your mu-plugin folder and it will automagically load Queulat).
 
+## Autoloading
+
+Queulat's own classes are loaded through Composer's classmap autoloader (see "Loading Queulat as mu-plugin" above). In addition, Queulat ships a small WordPress-style autoloader — `Queulat\Helpers\Autoloader` — intended for code that follows WordPress file-naming conventions, such as generated plugins.
+
+The autoloader maps a namespace prefix to a base directory: each namespace segment becomes a kebab-cased subdirectory, and the class name is resolved to a `class-`, `interface-`, `trait-`, or `enum-` prefixed file. For example, `My_Plugin\Song\Song_Post_Type` would be looked up as `includes/song/class-song-post-type.php`.
+
+Generated custom post type plugins already wire this up via the plugin stub:
+
+```php
+if ( is_callable( array( '\Queulat\Helpers\Autoloader', 'boot' ) ) ) {
+    \Queulat\Helpers\Autoloader::boot( 'My_Plugin\\', __DIR__ . '/includes' );
+}
+```
+
+To use it in your own plugin, boot it with your namespace and base directory before registering any hooks:
+
+```php
+\Queulat\Helpers\Autoloader::boot( 'My_Plugin\\', __DIR__ . '/includes' );
+```
+
 # Leveraging WordPress architecture with Queulat
 
 Queulat it's aimed at *improving the way we create things for WordPress*, so instead of fundamentally transforming it, it tries to use familiar concepts to build better-structured things for it, using *custom post types*, *custom post queries* and *custom post objects*.
@@ -92,6 +112,61 @@ foreach ( $tracklist as $track ) {
 ### Post Objects
 
 `@todo`
+
+## Generating plugins
+
+You can scaffold a custom post type plugin either from the admin generator
+(available to admin users under the "Tools" menu) or from the command line
+using [WP-CLI](https://wp-cli.org/).
+
+Queulat registers two commands:
+
+* `wp queulat generate cpt-plugin <Class_Name>` — scaffolds a full custom post
+  type plugin, including the post type, query and object classes, plus an entry
+  file that boots Queulat's autoloader for the generated namespace.
+* `wp queulat generate rest-field <Class_Name>` — scaffolds a `Queulat\REST_Field`
+  subclass that can extend a WordPress REST API endpoint.
+
+Both commands accept a `--namespace` flag to control the generated namespace
+(defaults to `Queulat\CPT` for CPT plugins and `Queulat\REST` for REST fields).
+
+Generated plugins place their PHP classes under an `includes/` directory and use
+`Queulat\Helpers\Autoloader` to load them (see "Autoloading" above).
+
+## REST fields
+
+Queulat can extend the WordPress REST API with custom fields via the
+`Queulat\REST_Field` abstract class, which implements both
+`Queulat\Contracts\REST_Field_Interface` and `Queulat\Contracts\Hookable_Interface`.
+
+Extend it and implement the abstract methods:
+
+* `value_callback( array $response_data, string $field_name, WP_REST_Request $request, string $object_type ): mixed` — returns the field value for responses.
+* `sanitize_callback( mixed $value, WP_REST_Request $request, string $field_name )` — sanitizes incoming values.
+* `validate_callback( mixed $value, WP_REST_Request $request, string $field_name ): bool|WP_Error` — validates incoming values.
+* `update_callback( $field_value, WP_Post|WP_Term|WP_User $data_object, $field_name, WP_REST_Request $request ): true|WP_Error` — persists submitted values.
+
+The base class also exposes `get_type()`, `get_object_type()`, `get_attribute()`,
+`get_schema()` and `get_description()` to describe the field, and its `init()`
+method (from `Hookable_Interface`) registers the field with the REST API.
+
+```php
+use Queulat\REST_Field;
+
+class Song_Duration_Field extends REST_Field {
+    public function get_object_type() : string {
+        return 'post';
+    }
+    public function get_attribute() : string {
+        return 'song_duration';
+    }
+    // ... implement value_callback, sanitize_callback, validate_callback, update_callback
+}
+
+// Register it:
+$field = new Song_Duration_Field();
+$field->init();
+```
 
 ## Meta boxes
 
@@ -197,7 +272,31 @@ Check the section on (using Queulat forms)[#using-queulat-forms] for more info o
 
 ## Validating forms
 
-`@todo`
+Queulat provides a small `Queulat\Validator` together with a set of reusable
+validation rules under `Queulat\Validator\Rules`. Each rule implements
+`Queulat\Validator\Validator_Interface` and exposes a `validate( $value ): bool`
+method.
+
+Available rules:
+
+* `Is_Email` — validates an email address.
+* `Is_Boolean` — validates a boolean-ish value.
+* `Is_Required` — ensures a value is present.
+* `Min_Length` / `Max_Length` — enforce string length bounds.
+* `Value_In` / `Value_Not_In` — restrict a value to (or away from) a set of allowed values.
+* `Valid_Recaptcha` — verifies a Google reCAPTCHA response.
+
+You can validate a single value against one or more rules, or use the validator
+inside a metabox `sanitize_data()` method alongside `queulat_sanitizer()`.
+
+```php
+use Queulat\Validator\Validator;
+use Queulat\Validator\Rules\Is_Email;
+use Queulat\Validator\Rules\Is_Required;
+
+$validator = new Validator( array( new Is_Required(), new Is_Email() ) );
+$validator->validate( $email ); // bool
+```
 
 ## Creating new form views
 
@@ -269,25 +368,67 @@ This method takes a `Node_Factory_Argument_Handler`, which needs:
 
 * An `$argument` (string) which is the name of the argument key that you'll handle.
 * A `$method` (string) which is the name of the method that will receive the parameters used on the factory method.
-* An optional `$call_type` (string) which determines how the $method will treat the received configuration values.
+* An optional `$call_type` (`Queulat\Forms\Node_Factory_Call_Type`) which determines how the $method will treat the received configuration values.
 
 The `$call_type` can be one of:
 
-`Node_Factory::CALL_TYPE_VALUE`: pass all arguments as a single array to the handler. This is the default setting. Example: `$obj->$method( $args );`
+`Node_Factory_Call_Type::VALUE`: pass all arguments as a single array to the handler. This is the default setting. Example: `$obj->$method( $args );`
 
-`Node_Factory::CALL_ARRAY`: pass arguments as individual parameters to the handler. Example: `call_user_func_array( [ $obj, $method ], $args );`
+`Node_Factory_Call_Type::ARRAY`: pass arguments as individual parameters to the handler. Example: `call_user_func_array( [ $obj, $method ], $args );`
 
-`Node_Factory::CALL_KEY_VALUE`: for each item in the argument, pass its key and value as parameters to the handler. Example:
+`Node_Factory_Call_Type::KEY_VALUE`: for each item in the argument, pass its key and value as parameters to the handler. Example:
 
 ```php
 foreach ( $args as $key => $val ) {
-	$obj->$method( $key, $val );
+    $obj->$method( $key, $val );
 }
 ```
 
-`Node_Factory::CALL_TYPE_VALUE_ITEMS`: for each item in the argument, use the value as parameter for the handler. Example: `array_walk( $args, [ $obj, $method ] );`
+`Node_Factory_Call_Type::VALUE_ITEMS`: for each item in the argument, use the value as parameter for the handler. Example: `array_walk( $args, [ $obj, $method ] );`
 
 # Interfaces
+
+## Contracts
+
+Queulat defines explicit contracts under the `Queulat\Contracts` namespace for
+its main building blocks. Implementing these interfaces lets your classes plug
+into Queulat's helpers and generators:
+
+* `Post_Type_Interface` — the public API expected from post type definitions.
+* `Post_Query_Interface` — the API for custom post queries.
+* `Post_Object_Interface` — the API for custom post objects.
+* `Metabox_Interface` — the API for metabox definitions.
+* `REST_Field_Interface` — the API for REST API field extensions.
+* `Asset_Loader_Interface` — the API for asset loaders (see "Loading assets" below).
+* `Hookable_Interface` — any class that can register its own WordPress hooks via an `init()` method. `Queulat\Post_Type` and `Queulat\REST_Field` implement it.
+
+### Registering hooks for hookable components
+
+The `queulat_register_hooks()` helper calls `init()` on any `Hookable_Interface`
+instance, which is the recommended way to wire a component's actions and filters:
+
+```php
+use function Queulat\queulat_register_hooks;
+
+queulat_register_hooks( new My_Post_Type() );
+```
+
+## Loading assets
+
+Queulat enqueues its admin assets through an implementation of
+`Queulat\Contracts\Asset_Loader_Interface`. The bundled
+`Queulat\Helpers\Webpack_Asset_Loader` reads a Webpack `manifest.json` /
+`entrypoints.json` and exposes `enqueue_script( $handle )`, `enqueue_style( $handle )`,
+`register_script( $path, $handle, $deps )` and `register_style( $path, $handle, $deps )`.
+
+Provide your own loader by implementing `Asset_Loader_Interface` and passing it to
+`Queulat\Bootstrap`:
+
+```php
+$loader   = new My_Asset_Loader( __DIR__ . '/dist' );
+$bootstrap = new Queulat\Bootstrap( $loader );
+$bootstrap->init();
+```
 
 ## Node_Interface
 
