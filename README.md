@@ -127,6 +127,12 @@ Queulat registers two commands:
 * `wp queulat generate rest-field <Class_Name>` — scaffolds a `Queulat\REST_Field`
   subclass that can extend a WordPress REST API endpoint.
 
+The same generators are also available under WP-CLI's built-in `scaffold`
+namespace:
+
+* `wp scaffold queulat-cpt-plugin <Class_Name>`
+* `wp scaffold queulat-rest-field <Class_Name>`
+
 Both commands accept a `--namespace` flag to control the generated namespace
 (defaults to `Queulat\CPT` for CPT plugins and `Queulat\REST` for REST fields).
 

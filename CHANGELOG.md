@@ -16,6 +16,7 @@ All notable changes to this project are documented in this file.
 - New `Queulat\Forms\Node_Factory_Call_Type` enum replaces string constants for argument handler call strategies.
 - Introduced interfaces for metaboxes (`Queulat\\Contracts\\Metabox_Interface`), post objects (`Queulat\\Contracts\\Post_Object_Interface`), and post queries (`Queulat\\Contracts\\Post_Query_Interface`) with corresponding class implementations updated accordingly.
 - Added a `wp queulat generate rest-field` CLI command to scaffold REST field classes extending the base `Queulat\\REST_Field`.
+- Added `wp scaffold queulat-cpt-plugin` and `wp scaffold queulat-rest-field` aliases so Queulat generators are discoverable under WP-CLI's built-in `scaffold` namespace while preserving the original `wp queulat generate` commands.
 - Added `Queulat\Contracts\Hookable_Interface` and the `queulat_register_hooks()` helper to register hooks for hookable components. `Queulat\Post_Type` and `Queulat\REST_Field` now implement this interface.
 
 ### Deprecated
