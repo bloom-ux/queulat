@@ -19,6 +19,7 @@ use Queulat\Forms\Node_Factory_Call_Type;
 use Queulat\Contracts\Asset_Loader_Interface;
 use Queulat\Generator\CLI\CPT_Plugin_Command;
 use Queulat\Generator\CLI\REST_Field_Command;
+use Queulat\Generator\CLI\Scaffold_Aliases;
 use Queulat\Forms\Node_Factory_Argument_Handler;
 
 /**
@@ -103,6 +104,8 @@ class Bootstrap {
 				$command->get_args()
 			);
 		}
+
+		Scaffold_Aliases::register( $commands );
 	}
 
 	/**

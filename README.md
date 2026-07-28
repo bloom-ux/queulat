@@ -77,9 +77,9 @@ To use it in your own plugin, boot it with your namespace and base directory bef
 * [Getting started](docs/getting-started.md) — architecture overview, post types, queries, objects and plugin bootstrapping.
 * [Generating plugins](docs/generating-plugins.md) — scaffolding CPT and REST field plugins with WP-CLI.
 * [REST fields](docs/rest-fields.md) — extending the WordPress REST API.
+* [Loading assets](docs/assets.md) — enqueuing Webpack-built assets.
 * [Meta boxes](docs/meta-boxes.md) — building focused data-entry interfaces.
 * [Using Queulat Forms](docs/forms.md) — form elements, validation and the `Node_Factory`.
-* [Loading assets](docs/assets.md) — enqueuing Webpack-built assets.
 * [Interfaces](docs/interfaces.md) — contracts, hookable components and form node interfaces.
 
 See also the [Changelog](CHANGELOG.md).
