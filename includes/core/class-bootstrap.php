@@ -126,6 +126,6 @@ class Bootstrap {
 	 * @return void
 	 */
 	public function enqueue_assets() {
-		$this->asset_loader->enqueue_script( 'admin.css' );
+		$this->asset_loader->enqueue_style( 'admin.css' );
 	}
 }

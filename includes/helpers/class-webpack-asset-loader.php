@@ -138,11 +138,14 @@ class Webpack_Asset_Loader implements Asset_Loader_Interface {
 	 */
 	public function enqueue_script( string $handle, array $dependencies = array() ): void {
 		$js_dependencies = $this->get_js_dependencies( $handle, $dependencies );
+		$file_handle = $this->get_file_handle( $handle );
+		$resource_uri = $this->get_resource_uri( $handle );
+		$resource_version = $this->get_resource_version( $handle );
 		wp_enqueue_script(
-			$this->get_file_handle( $handle ),
-			$this->get_resource_uri( $handle ),
+			$file_handle,
+			$resource_uri,
 			$js_dependencies,
-			$this->get_resource_version( $handle ),
+			$resource_version,
 			array(
 				'strategy'  => 'defer',
 				'in_footer' => true,
@@ -198,11 +201,14 @@ class Webpack_Asset_Loader implements Asset_Loader_Interface {
 	 */
 	public function enqueue_style( string $handle, array $dependencies = array() ): void {
 		$dependencies = $this->get_css_dependencies( $dependencies );
+		$file_handle = $this->get_file_handle( $handle );
+		$resource_uri = $this->get_resource_uri( $handle );
+		$resource_version = $this->get_resource_version( $handle );
 		wp_enqueue_style(
-			$this->get_file_handle( $handle ),
-			$this->get_resource_uri( $handle ),
+			$file_handle,
+			$resource_uri,
 			$dependencies,
-			$this->get_resource_version( $handle ),
+			$resource_version,
 			$this->default_css_media
 		);
 	}

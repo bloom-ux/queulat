@@ -46,7 +46,7 @@ add_action(
  */
 function bootstrap() {
 	$queulat_plugin_dir = plugin_dir_path( __FILE__ );
-	$asset_loader       = new Webpack_Asset_Loader( 'queulat', $queulat_plugin_dir . 'assets/build', plugins_url( '/assets/build', __FILE__ ) );
+	$asset_loader       = new Webpack_Asset_Loader( 'queulat', $queulat_plugin_dir . 'dist', plugins_url( '/dist', __FILE__ ) );
 	$bootstrap          = new Bootstrap( $asset_loader );
 	$bootstrap->init();
 }
