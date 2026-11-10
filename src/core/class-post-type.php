@@ -148,8 +148,8 @@ abstract class Post_Type {
 		 */
 		do_action( "queulat_post_type_{$post_type->get_post_type()}_activation", $post_type );
 
-		// regenerate permalinks structure
-		flush_rewrite_rules();
+		// force permalinks structure regeneration
+		delete_option( 'rewrite_rules' );
 
 		return true;
 	}
